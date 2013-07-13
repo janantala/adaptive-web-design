@@ -1,0 +1,13 @@
+Conditional loading
+ ✔ lightbox - redirect / popup @done (13-03-08 03:01)
+ ✔ maps - thumbnail / live @done (13-03-08 03:07)
+ ✔ video (youtube, vimeo...) - thumbnail / live @done (13-03-08 19:15)
+
+App buttons
+ ✔ open in app button @done (13-03-08 03:01)
+ ✔ app store icon @done (13-03-08 03:04)
+
+Other
+ ☐ social buttons (SocialCount plugin)
+ ☐ image / background image (picture element, background-image)?
+ ☐ navigation patterns (bootstrap, zurb)?
