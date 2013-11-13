@@ -70,9 +70,12 @@ Viewport je celkové miesto potrebné na zobrazenie webovej stránky. Na mobiln�
 \subsubsection{Interakčné prostriedky} % (fold)
 \label{ssub:interak_n_prostriedky}
 
-Postupom času začína upadať používanie klasických stolových počítačov ovládaných pomocou klávesnice a myši a presadzujú sa nové druhy mobilných zariadení so vstupným interfejsom v podobe dotykovej plochy. Tá sa ako ovládací prostriedok začína presadzovať okrem mobilných zariadení aj v notebookoch. Pri dizajne aplikácie je preto potrebné myslieť aj na takýchto používateľov. Okrem nich však existujú aj iné možnosti ovládania ako sú napríklad sledovanie pohybu očí, natáčanie zariadenia či počúvanie hlasových povelov. Je tak potrebné brať do úvahy aj ďalšie možnosti.
+Postupom času začína upadať používanie klasických stolových počítačov ovládaných pomocou klávesnice a myši a presadzujú sa nové druhy mobilných zariadení so vstupným interfejsom v podobe množstva senzorov, ale hlavne s dotykovou plochou. Tá sa ako ovládací prostriedok začína presadzovať okrem mobilných zariadení aj v notebookoch. Pri dizajne aplikácie je preto potrebné myslieť aj na takýchto používateľov. Okrem nich však existujú aj iné možnosti ovládania ako sú napríklad sledovanie pohybu pomocou web kamery, natočanie a posúvanie zariadenia získané pomocou gyroskupu a accelerometra či počúvanie hlasových povelov zaznamenaných cez mikrofón. Je tak potrebné brať do úvahy aj ďalšie možnosti.
 
 % \newpage
+
+\paragraph{Dotyk} % (fold)
+
 Dôležitým prvkom v prípade mobilných zariadení je možnosť ovládania aplikácii jednou rukou. Mobilné zariadenia sú využívané takmer pri každej príležitesti či vo vonkajšom alebo vnútornom prostredí, preto je potrebné správne prispôsobiť vzhľad a rozmiestnenie ovládacích prvkov. Pre ne platí, že najjednoduchšie dosiahnuteľné časti sú v spodnej strane zariadenia a s postupom k hornému okraju možnosť dosiahnutia klesá \cite{mobilebooktouch}.
 
 \begin{figure}[H]
@@ -125,6 +128,32 @@ Podobné výsledky \cite{mobilebooktouch} sú aj pri novej kategórii zariadení
 \end{figure}
 
 
+
+\paragraph{Reč} % (fold)
+
+Možnosť rozpoznania reči vo webovej aplikácii je v súčasnosti experimentálna novinka a jej štandartizacia je zatiaľ veľmi ďaleko. Používateľ samozrejme musí explicitne povoliť použitie mikrofónu pre webovú aplikáciu. Špecifikácia je zatiaľ len vo forme návrhu a nie je ani zaradená do W3C štandartu HTML5 \cite{webspeechapi}. Podpora v prehliadočoch s enginom Blink sa však už nachádza od začiatku roku 2013 a základná funkčnosť bola odprezentovaná v rámci konferencie Google IO 2013. Rozpoznanie reči prebieha vzdialene na serveroch patriacich Googlu a zatiaľ neexistuje možnosť rozpoznania lokálne \cite{moreawesomeweb}.
+
+S rozpoznaním reči je spojená aj jeho syntéza, alebo preklad textu na reč. Tá je na tom v súčasnosti čo sa týka podpory a implementácie v prehliadačoch ešte horšie. Experimentálna funkčnosť existuje len v posledných buildoch prehliadočov. Našťastie sa táto funkcionala dá čiastočne nahradiť volaniami vzdialených webových služieb ako je napríklad ,,Google Translate''. Takáto syntéza však už neprebieha na zariadení, ale len sa zo serveru príjme zvuková nahrávka, ktorá sa následne prehrá.
+
+\paragraph{Kamera} % (fold)
+
+Moderné webové prehliadače umožňujú získať prístup aj k video streamu z web kamery používateľa. Na prístup je rovnako potrebné povolenie od používateľa. Tento video stream prebieha vo zvolenej frekvencii a sa dá odchytiť a následne uložiť do elementu canvas, kde už sa k jednotlivým vzorkám pristupuje ako k obrázku. Je možné odfiltrovať okolie a zachovať len podstatné informácie na základe ktorých sa získa pohyb, respektíve gesto od používateľa.
+
+
+\paragraph{Accelerometer a Gyroskop} % (fold)
+
+Medzi dlhodobo podporované senzory najmä v mobilných zariadeniach patria accelerometer a gyroskop. Je k nim umožnený prístup priamo z webovej aplikácie aj bez priameho povolenia od používateľa.
+
+Accelerometer slúží na získanie zrýchlenia zariadenia v osiach x, y a z, gyroskop na získanie uhlového zrýchlenia okolo týchto osí. Ich rozdiel je znázornený na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/accvsgyro.png}
+  \caption[Accelerometor a gyroskop]{
+    Zaznamenávané údaje pomocou accelerometora a gyroskopu}
+  \label{fig: tnavlaptops}
+\end{figure}
+
 % subsubsection interak_n_prostriedky (end)
 
 
@@ -146,7 +175,7 @@ Načítanie webovej stránky sa skladá z viacerých fáz. Okrem samotnej konekt
 	\label{fig: timing}
 \end{figure}
 
-Tieto fázy môžme aj priamo merať pomocou interfacu \url{performance.timing}, ktorý ich zobrazuje priamo v podobe času \cite{1000ms}. Vďaka tomu máme dokonalejší prehľad o používateľovom pripojení a vieme mu tak prispôsobiť jednotlivé komponenty stránky. W3C špecifikácia je vo fáze ,,Recommendation'' \cite{timing}, ale stále hlavnou nevýhodou je chýbajúca podpora v niektorých prehliadačoch. Čiastočnou náhradou je meranie rozdielov dvoch časov, ale tak získame dáta len zo spracovania požiadavky na strane klienta.
+Tieto fázy môžme aj priamo merať pomocou interfacu \url{performance.timing}, ktorý ich zobrazuje priamo v podobe času \cite{1000ms, performancebrowsernetworking}. Vďaka tomu máme dokonalejší prehľad o používateľovom pripojení a vieme mu tak prispôsobiť jednotlivé komponenty stránky. W3C špecifikácia je vo fáze ,,Recommendation'' \cite{timing}, ale stále hlavnou nevýhodou je chýbajúca podpora v niektorých prehliadačoch. Čiastočnou náhradou je meranie rozdielov dvoch časov, ale tak získame dáta len zo spracovania požiadavky na strane klienta.
 
 \begin{figure}[H]
 	\centering
@@ -331,7 +360,28 @@ Kombináciou techník Responsive Design a Server-side Adaptation vznikla novšia
 \newpage
 \section{Nástroj na overenie} % (fold)
 \label{sec:n_stroj_na_overenie}
-Ako nástroj na overenie sa vytvorila knižnica do populárneho JavaScriptového frameworku AngularJS \footnote{AngularJS \url{http://angularjs.org/} je populárny JavaScriptový framework, ktorý rozširuje HTML o nové možnosti pre webové aplikácie.}, kde sa následne skúmali možnosti adaptácie komponentov.
+Ako nástroj na overenie sa vytvorila knižnica s názvom Angular-Adaptive \footnote{Angular-Adaptive \url{http://angular-adaptive.github.io/} je sprievodca vo svete adaptívneho web dizajnu.} do populárneho JavaScriptového frameworku AngularJS \footnote{AngularJS \url{http://angularjs.org/} je populárny JavaScriptový framework, ktorý rozširuje HTML o nové možnosti pre webové aplikácie.}, kde sa následne skúmali možnosti adaptácie komponentov. Hlavným dôvodom výberu AngularJS bola možnosť vytvárania modulov, ktoré sa dajú následne jednoducho použivať vo webových projektoch. Takáto podpora vytvárania externých modulov bude už o pár rokov natívna v prehliadačoch vďaka webovým komponentom \cite{webcomponents}. Samotná distribúcia modulov prebieha pomocou balíčkovaciemu nástroja Bower \footnote{Bower \url{http://bower.io/} je balíčkovací manažér pre web.}.
+
+\subsection{Alternatívne spôsoby ovládania} % (fold)
+\label{sub:alternat_vne_sp_soby_ovl_dania}
+
+\subsubsection{Reč} % (fold)
+\label{ssub:re_}
+
+% subsubsection re_ (end)
+
+
+\subsubsection{Pohyb} % (fold)
+\label{ssub:pohyb}
+
+% subsubsection pohyb (end)
+
+\subsubsection{Gyroskop} % (fold)
+\label{ssub:gyroskop}
+
+% subsubsection gyroskop (end)
+
+% subsection alternat_vne_sp_soby_ovl_dania (end)
 
 \subsection{Komponenty} % (fold)
 \label{sub:komponenty}
