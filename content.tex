@@ -419,7 +419,9 @@ The tables below express where the zero point is for a given axis, what the valu
 RHR* = Right Hand Rule. That positive values increase when rotating clockwise
 around the axis of rotation when looking along the axis' postive trajectory. This causes confusion because for a compass it looks like you're going backwards but that's because you're looking along the -ive trajectory of the Z axis.
 
-Alpha:
+\paragraph{Alpha} % (fold)
+\label{par:alpha}
+
 
 The spec is unclear what the defaults should be and so as a result many different choices are taken by the vendors. This causes confusion and the spec is not clear about what 0 degrees should actually be. From the example it is implied that North is 0 degrees because West is given as +90 degrees (which is correct under the RHR).
 
@@ -441,7 +443,12 @@ The range is tested by holding the device level in the horizontal plane, orienti
   \caption[Alpha rotácia gyroskopu]{Alpha rotácia gyroskopu}
 \end{table}
 
-Beta:
+% paragraph alpha (end)
+
+
+\paragraph{Beta} % (fold)
+\label{par:beta}
+
 
 The spec defines zero point as being flat in the horizontal plane. All browsers now support this model. Note that there are some issues in the ranging of the values.
 
@@ -467,7 +474,11 @@ Under iOS as well as the stock Android browser and Chrome for Android, the rotat
 
 In FF on android the rotation is back to front but it does go through the full range to 180 degrees. However under firefox the value is -90 when the top is point upwards and 90 when the top of the device points downwards. This is a reversing of the RHR.
 
-Gamma:
+% paragraph beta (end)
+
+\paragraph{Gamma} % (fold)
+\label{par:gamma}
+
 
 The spec defines the zero point as being level in the horizontal place. Again there are some issues with ranges and some implied issues with how the W3C have defined this as they are assuming only 90 degrees of rotation around the Y axis is relevant.
 
@@ -497,10 +508,27 @@ The Chrome for Android and stock android browsers create the right rotational va
 
 Firefox reverses its range the same way as it does on Beta. The range is correct however rotation clockwise results in a -ive number and the reverse.
 
+% paragraph gamma (end)
 
 
 \paragraph{Gyrocopter} % (fold)
 \label{par:gyrocopter}
+
+Na vyriešenie problémov pri vývoji webových aplikácii spôsobených rôznymi implementáciami rotácii v prehliadačoch som vytvoril rozšírenie Gyrocopter pre prehliadač Chrome \footnote{Dostupné na stiahnutie z Chrome Web Store \url{https://chrome.google.com/webstore/detail/gyrocopter/oooalfgemajfclliinfcdkifafmcfjop}}.
+
+Toto rozšírenie umožňuje simulovať udalosti ktoré nastanú pri rotácii zariadenia, pričom používateľ môže natáčať zariadenie vo všetkých troch osiach.
+
+Nakoľko hodnoty rotácii sú implementované v prehliadačoch rôzne, tak používateľ má na výber zvoliť si podľa akej implementácie chce vyvolávať udalosti rotácie. Simulovanými prehliadačmi na výber sú:
+
+\begin{itemize}
+  \item W3C špecifikácia
+  \item iOS Safari
+  \item Android Chrome
+  \item Android prehliadač
+  \item Firefox pre Android
+\end{itemize}
+
+Samotné používateľské rozhranie rozšírenia je znázornené na nasledujúcom obrázku:
 
 \begin{figure}[H]
   \centering
