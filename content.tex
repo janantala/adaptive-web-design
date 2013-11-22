@@ -360,13 +360,32 @@ Kombináciou techník Responsive Design a Server-side Adaptation vznikla novšia
 \newpage
 \section{Nástroj na overenie} % (fold)
 \label{sec:n_stroj_na_overenie}
-Ako nástroj na overenie sa vytvorila knižnica s názvom Angular-Adaptive \footnote{Angular-Adaptive \url{http://angular-adaptive.github.io/} je sprievodca vo svete adaptívneho web dizajnu.} do populárneho JavaScriptového frameworku AngularJS \footnote{AngularJS \url{http://angularjs.org/} je populárny JavaScriptový framework, ktorý rozširuje HTML o nové možnosti pre webové aplikácie.}, kde sa následne skúmali možnosti adaptácie komponentov. Hlavným dôvodom výberu AngularJS bola možnosť vytvárania modulov, ktoré sa dajú následne jednoducho použivať vo webových projektoch. Takáto podpora vytvárania externých modulov bude už o pár rokov natívna v prehliadačoch vďaka webovým komponentom \cite{webcomponents}. Samotná distribúcia modulov prebieha pomocou balíčkovaciemu nástroja Bower \footnote{Bower \url{http://bower.io/} je balíčkovací manažér pre web.}.
+Ako nástroj na overenie sa vytvorila knižnica s názvom Angular-Adaptive \footnote{Angular-Adaptive \url{http://angular-adaptive.github.io/} je sprievodca vo svete adaptívneho web dizajnu.} do populárneho JavaScriptového frameworku AngularJS \footnote{AngularJS \url{http://angularjs.org/} je populárny JavaScriptový framework, ktorý rozširuje HTML o nové možnosti pre webové aplikácie.}, kde sa následne skúmali možnosti adaptácie komponentov pomocou metódy progressive enhancement. Hlavným dôvodom výberu AngularJS bola možnosť vytvárania modulov, ktoré sa dajú následne jednoducho použivať vo webových projektoch. Takáto podpora vytvárania externých modulov bude už o pár rokov natívna v prehliadačoch vďaka webovým komponentom \cite{webcomponents}. Samotná distribúcia modulov prebieha pomocou balíčkovaciemu nástroja Bower \footnote{Bower \url{http://bower.io/} je balíčkovací manažér pre web.}.
 
 \subsection{Alternatívne spôsoby ovládania} % (fold)
 \label{sub:alternat_vne_sp_soby_ovl_dania}
 
+Príchod mobilných zariadení priniesol a spopularizoval nový spôsob interakcie - ovládanie zariadenia pomocou dotyku. Ten však vždy nemusí byť ten najvýhodnejší najmä v prostredí webových aplikácií. Najmä mobilné zariadenia sú vybavené gyroskopom ktorý môže uľahčiť ovládanie aplikácie len vďaka nakláňaniu zariadenia do strán. Podobne môže reagovať zariadenie sledovaním okolia vďaka vstupu z webovej kamery, ktorá je vstavané v množstve zariadení. Typickým senzorom v zariadeniach je mikrofón umožňujúci zaznamenať zvuk, z ktorého sa analyzujú rečové povely a tie vedia zefektívniť ovládanie aplikácie.
+
 \subsubsection{Reč} % (fold)
 \label{ssub:re_}
+
+Rozpoznanie reči.
+
+
+Rozpoznanie úloh prebieha na základe regulárneho výrazu. Keď sa aktuálne nastavený jazyk rozpoznávania zhoduje s jazykom v úlohe a rozpoznaný text spĺňa podmienku regulárneho výrazu, tak sa zavolá asociovaná callback funkcia. Tá v parametri obsahuje rozpoznaný text, s ktorým sa dá ďalej pracovať. Príklad konfigurácie na pridanie novej úlohy má nasledujúci tvar:
+
+\begin{verbatim}
+'someTask': {
+  'regex': /^do .+/gi,
+  'lang': 'en-US',
+  'call': function(utterance){
+    // DO SOMETHING
+  }
+}
+\end{verbatim}
+
+Konfiguráciu je možné zavolať globálne v rámci aplikácie alebo dynamicky vďaka podpore regulárneho výrazu pre vytvárané elementy. Napríklad ak sa v aplikácii pracuje so zoznamom úloh, tak globálne je možné obsluhovať pridanie novej úlohy a dynamicky vytvárané elementy môžu mať vlastnú obsluhu, ktorá počúva na ich meno.
 
 % subsubsection re_ (end)
 
@@ -374,29 +393,61 @@ Ako nástroj na overenie sa vytvorila knižnica s názvom Angular-Adaptive \foot
 \subsubsection{Pohyb} % (fold)
 \label{ssub:pohyb}
 
+Ovládanie webovej aplikácie pohybom prebieha vďaka webovej kamere. Zachytený video stream sa sníma s frekvenciou 60 Hz. Každý jeden snímok je získaný z kamery a vykreslený do canvasu. Je tvorený množinou pixelov s rgba hodnotami a ten sa následne upraví pomocou hsv filtra aplikovaného na všetky pixely aby sa detekovali oblasti s kožou. Upravený snímok je tvorený dvomi farbami: tmavou znamenajúcou kožu a bielou pre ostatné oblasti.
+
+Následne prebieha ďalšie upravovanie pri ktorom sa detekuju hrany. Ich detekcia prebieha na základe rozdielov farebnosti pixelov posledných dvoch snímkov s aplikovaným filtrom kože. Opäť vznikne snímok tvorený dvomi farbami, ale tentokrát tmavá farba sa nachádza len na hranách a biela na ostatných častiach obrázku.
+
+Keď je obrázok v už takomto stave tak je možné začať rozpoznávať predvádzané gesto. Spočíta sa celkový počet zmenených bodov a pomer zmenených bodov v osiach x a y obrázka. Postupným hromadením snímkov a spočítavaním všetkých zmenených bodov sa určí celkový smer pohybu. Celkovo sa rozpoznávajú štyri základné gestá, kde po úspešnom rozpoznaní sa vykonajú priradené funkcie:
+
+\begin{itemize}
+  \item onSwipeLeft - pohyb zprava vľavo
+  \item onSwipeRight - pohyb zľava vpravo
+  \item onSwipeUp - pohyb zdola hore
+  \item onSwipeDown - pohyb zhora dole 
+\end{itemize}
+
+Citlivosť aplikovania filtrov a rozpoznávania gesta je samozrejme možné konfigurovať nastavením tresholdu a úpravou hsv filtra. Vytvorený modul okrem toho podporuje aj ďalšie udalosti na ktoré je možné viazať funkcie akými sú začiatok a koniec snímania pretože na prístup k web kamere je potrebné explicitné povolenie od používateľa
+
+\paragraph{Vizualizácia} % (fold)
+\label{par:zobrazenie_n_h_adu}
+
+V aplikácii je možné pridať aj zobrazenie aktuálneho náhľadu z webovej kamery a to použitím vytvorenej direktívy pridaním atribútu ,,adaptive-motion'' ku canvas elementu. Atribút môže nadobúdať nasledujúce hodnoty:
+
+\begin{itemize}
+  \item video - zobrazí aktuálny náhľad z web kamery
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.3\textwidth]{img/motion/video.png}
-  \caption[Pohyb - video]{
-    Pohyb - video}
+  \caption[Vizualizácia videa zachzteného web kamerou]{
+    Vizualizácia videa zachzteného web kamerou}
   \label{fig: motion-video}
 \end{figure}
+
+  \item skin - zobrazí video stream po aplikovaní filtra rozpoznania kože
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.3\textwidth]{img/motion/skin.png}
-  \caption[Pohyb - detekcia kože]{
-    Pohyb - detekcia kože}
+  \caption[Vizualizácia videa po aplikovaní filtra detekcie kože]{
+    Vizualizácia videa po aplikovaní filtra detekcie kože}
   \label{fig: motion-skin}
 \end{figure}
+
+  \item edge - zobrazí video stream po aplikovaní filtra rozpoznania hrán
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.3\textwidth]{img/motion/edges.png}
-  \caption[Pohyb - detekcia hrán]{
-    Pohyb - detekcia hrán}
+  \caption[Vizualizácia videa po aplikovaní filtra detekcie hrán]{
+    Vizualizácia videa po aplikovaní filtra detekcie hrán}
   \label{fig: motion-edges}
 \end{figure}
+
+\end{itemize}
+
+
+% paragraph zobrazenie_n_h_adu (end)
 
 % subsubsection pohyb (end)
 
@@ -516,13 +567,13 @@ Firefox reverses its range the same way as it does on Beta. The range is correct
 
 Na vyriešenie problémov pri vývoji webových aplikácii spôsobených rôznymi implementáciami rotácii v prehliadačoch som vytvoril rozšírenie Gyrocopter pre prehliadač Chrome \footnote{Dostupné na stiahnutie z Chrome Web Store \url{https://chrome.google.com/webstore/detail/gyrocopter/oooalfgemajfclliinfcdkifafmcfjop}}.
 
-Toto rozšírenie umožňuje simulovať udalosti ktoré nastanú pri rotácii zariadenia, pričom používateľ môže natáčať zariadenie vo všetkých troch osiach.
+Toto rozšírenie umožňuje simulovať udalosti ktoré nastanú pri rotácii zariadenia, pričom používateľ môže natáčať zariadenie vo všetkých troch osiach. Rozšírenie je implementované pre vývojárov priamo do prostredia ,,Chrome Developer Tools''.
 
 Nakoľko hodnoty rotácii sú implementované v prehliadačoch rôzne, tak používateľ má na výber zvoliť si podľa akej implementácie chce vyvolávať udalosti rotácie. Simulovanými prehliadačmi na výber sú:
 
 \begin{itemize}
   \item W3C špecifikácia
-  \item iOS Safari
+  \item iOS Safari (Chrome používa web view)
   \item Android Chrome
   \item Android prehliadač
   \item Firefox pre Android
