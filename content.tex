@@ -370,10 +370,13 @@ Príchod mobilných zariadení priniesol a spopularizoval nový spôsob interakc
 \subsubsection{Reč} % (fold)
 \label{ssub:re_}
 
-Rozpoznanie reči.
+Javascriptové Web Speech API umožňuje pridanie rozpoznanie reči do webovej aplikácie. Na jeho základe bol vytvorený modul ktorý umožňuje pridať kompletné ovládanie webovej aplikácie. Používateľ všal musí povoliť prístup aplikácie k mikrofónu. Po jeho potvrdení už prebieha kontinuálne rozpoznávanie reči.
 
+Po pridaní modulu do webovej aplikácie je potrebné si ho nakonfigurovať. Musia sa vytvoriť úlohy, ktoré definujú správanie aplikácie a prípadne aj reč, v ktorej prebieha rozpoznávanie. Implementované rozpoznávanie reči v prehliadači Google Chrome podporuje 32 rôznych jazykov a ďalšie prízvuky vrátane slovenčiny.
 
-Rozpoznanie úloh prebieha na základe regulárneho výrazu. Keď sa aktuálne nastavený jazyk rozpoznávania zhoduje s jazykom v úlohe a rozpoznaný text spĺňa podmienku regulárneho výrazu, tak sa zavolá asociovaná callback funkcia. Tá v parametri obsahuje rozpoznaný text, s ktorým sa dá ďalej pracovať. Príklad konfigurácie na pridanie novej úlohy má nasledujúci tvar:
+Rozpoznanie úloh prebieha na základe regulárneho výrazu. Keď sa aktuálne nastavený jazyk rozpoznávania zhoduje s jazykom v úlohe a rozpoznaný text spĺňa podmienku regulárneho výrazu, tak sa zavolá asociovaná callback funkcia. Tá v parametri obsahuje rozpoznaný text, s ktorým sa dá ďalej pracovať. 
+
+Príklad konfigurácie na pridanie novej úlohy má nasledujúci tvar:
 
 \begin{verbatim}
 'someTask': {
@@ -454,41 +457,51 @@ V aplikácii je možné pridať aj zobrazenie aktuálneho náhľadu z webovej ka
 \subsubsection{Gyroskop} % (fold)
 \label{ssub:gyroskop}
 
+Jednou z možností ovládania webovej aplikácie je použitie gyroskopu. Na tento prípad som vytvoril modul pomocou ktorého je možné v aplikácií skrolovať len pomocou natáčania zariadenia do strán bez ďalšej potrebnej interakcie používateľa. Modul sa inacializuje pridaním atribútu ,,adaptivescroll'' k elementu, v ktorom má prebiehať skrolovanie. Tým môže byť napríklad element ,,body'', ktorý zohľadňuje skrolovanie celej webovej stránky, alebo aj nejaký iný vnorený element. Následne stačí zavalať metódu so začatím sledovania polohy zariadenia, v ktorej sa môže upraviť ignorovaná hranica natočenia v uhloch a skrolovanie prebieha automaticky. V prípade potreby je toto sledovanie možné aj ukončiť.
 
-The specs suggest the following:
+Po začatí sledovania aktuálneho natočenia zariadenia sa uloží jeho počiatočná hodnota, ktorá sa používa ako relatívna hranica medzi stranami na ktoré prebieha skrolovanie. Postupným natáčaním zariadenia v smere hodinových ručičiek okolo osi beta od počiatočnej hodnoty k používateľovi sa vykonáva skrolovanie elemntu smerom dola, natáčaním na opačnú stranu od počiatočnej hodnoty prebieha skrolovanie hore.
+
+Do úvahy pri zohľadňovaní rýchlosti skrolovania sa berie aj absolútna hodnota natočenia zariadenia od počiatočnej hodnoty zariadenia. Čím je táto hodnota väčšia, tým rýchlejšie prebieha skrolovanie. Samotný proces skrolovania prebieha vďaka číselnej zmene offsetu elementu. Plynulosť skrolovania je zaručená použitím animácii pomocou requestAnimationFrame. Tá prebieha s frekvenciou 60 Hz a je časovaná priamo prehliadačom. Tej však chýba podpora v straších verziách, v takom prípade musí byť použítý manuálny časovač aplikácie.
+
+Okrem skrolovania modul obsahuje aj ďalšie metódy onalpha, onbeta a ongamma, ktorých návratová funkcia sa zavolá vždy po zmene rotácie zariadenia a je ich možné použiť na iné potreby v aplikácii. Funkcia obsahuje parameter absolútnu zmenu pozície v uhloch od počiatočnej k aktuálnej.
+
+
+
+Špecifikácia uvádza nasledovné:
 
 \begin{itemize}
-  \item X is in the plane of the ground and is positive to the East (-ive to West)
-  \item Y is in the plane of the ground and is positive to the North (-ive to South)
-  \item Z is perpendicular to the ground plane and is positive towards the sky (negative into the earth)
+  \item os X je rovnobežná na rovinu zeme, kladné hodnoty má v smere na východ, záporné na západ
+  \item os Y je rovnobežná na rovinu zeme, kladné hodnoty má v smere na sever, záporné na juh
+  \item os Z je kolmá na rovinu zeme, kladné hodnoty má v smere od zeme, záporné smerom k zemi
 \end{itemize}
 
-Rotation should be expressed using the right hand rule, thus positive values with rotation clockwise around the axis of rotation when looking down the axis.
+Rotácia by mala byť popísaná pravidlom pravej ruky, teda kladné hodnoty rotácie sú v smere hodinových ručičiek okolo osí.
 
-The tables below express where the zero point is for a given axis, what the values are for it's rotational range, whether it obeys the Right Hand Rule* and any further notes.
+Nasledujúce tabuľky ukazujú, kde sa nachádzajú nulové body pre jednotlivé osi, aké hodnoty nadobúda rozsah rotácie a či je dodržané pravidlo pravej ruky.
 
-RHR* = Right Hand Rule. That positive values increase when rotating clockwise
-around the axis of rotation when looking along the axis' postive trajectory. This causes confusion because for a compass it looks like you're going backwards but that's because you're looking along the -ive trajectory of the Z axis.
+Pravidlo pravej ruky (PPR) hovorí: ,,Kladné hodnoty rotácie sa zvyšujú pri rotovaní okolo osi v smere hodinových ručičiek pri ukazovaní smerom na narastajúcu kladnú hodnotu smerovej osi.''
+
+Táto definícia je však protichodná s hodnotami kompasu. Pri rotácii okolo osi Z v smere rotácie kompasu sa hodnoty rotácie znižujú a nie narastajú. To je však spôsobené pohľadom do záporných hodnôt osi Z.
+
 
 \paragraph{Alpha} % (fold)
 \label{par:alpha}
 
+Rotácia okolo osi Z nadobúda hodnoty rotácie alpha. V špecifikácii je nejasne definové aké by mali byť východiskové hodnoty, čo vo výsledku prináša rôzne implementácie rotácie v prehliadačoch. To spôsobuje zmätok nakoľko zo špecifikácie nie je jasné, na akú stranu by mal ukazovať nulový bod. Dá sa odpozorovať podľa pravidla pravej ruky, že 0 stupňov ukazuje smerom na sever, pretože implementovaných 90 stupňov ukazuje na východ.
 
-The spec is unclear what the defaults should be and so as a result many different choices are taken by the vendors. This causes confusion and the spec is not clear about what 0 degrees should actually be. From the example it is implied that North is 0 degrees because West is given as +90 degrees (which is correct under the RHR).
-
-The range is tested by holding the device level in the horizontal plane, orienting it to the zero point then turning it through 360 degrees, observing its range and direction
+Rozsah hodnôt bol testovaný pri držaní zariadenia v horizontálnej polohe a vycentrovaní smerom k nulovému bodu, keď hodnota rotácie bola 360 stupňov. Pozorované boli nasledujúce hodnoty:
 
 \begin{table}[H]
   \begin{tabular}{ | l | l | l | l |}
   \hline
-              & Zero point  & RHR   & Range \\ \hline
-  Reference   & North (0)   & Y     & [0, 360] \\  
-  iOS Chome   & East (90)   & Y     & [0, 360] \\  
-  iOS Safari  & East (90)   & Y     & [0, 360] \\  
+              & Nulový bod  & PPR   & Rozsah \\ \hline
+  Reference   & Sever (0)   & A     & [0, 360] \\  
+  iOS Chome   & Východ (90)   & A     & [0, 360] \\  
+  iOS Safari  & Východ (90)   & A     & [0, 360] \\  
   Android & & & \\  
-  Chrome      & North (0)   & Y     & [0, 360] \\  
-  Stock       & West (270)  & Y     & [0, 360] \\  
-  Firefox     & North (0)   & N     & [0, 360] \\
+  Chrome      & Sever (0)   & A     & [0, 360] \\  
+  Stock       & Západ (270)  & A     & [0, 360] \\  
+  Firefox     & Sever (0)   & N     & [0, 360] \\
   \hline
   \end{tabular}
   \caption[Alpha rotácia gyroskopu]{Alpha rotácia gyroskopu}
@@ -500,64 +513,64 @@ The range is tested by holding the device level in the horizontal plane, orienti
 \paragraph{Beta} % (fold)
 \label{par:beta}
 
+Rotácia okolo osi X nadobúda hodnoty rotácie beta. Špecifikácia definuje nulový bod ako horizontálnu polohu. Všetky testované prehliadače majú implementovaný smer osi rotácie správne, problémy však nastávajú pri rozsahu rotačných hodnôt.
 
-The spec defines zero point as being flat in the horizontal plane. All browsers now support this model. Note that there are some issues in the ranging of the values.
+Rozsah bol testovaný pri držaní zariadenia v horizontálnej polohe, čo je nulový bod. Zariadenie bolo potom otáčané okolo osi X o 90 stupňov tak, že displej zariadenia smeroval k pozorovateľovi. Potom nasledovalo otáčanie o ďalších 90 stupňov tak, že displej bol smerom k zemi. Na koniec nasledovala rotácia zvyšných 180 stupňov smerom do počiatočnej polohy, čím sa rotácia dokončila.
 
-The range is tested by holding the device level in the horizontal plan and confirming the zero point. The device is then rotated around the X axis through 90 degrees (screen faces observer), then through the next 90 degrees (screen face down), then the remaining 180 degrees completing the bottom portion of the rotation.
 
 \begin{table}[H]
   \begin{tabular}{ | l | l | l | l | l |}
   \hline
-              & Zero point    & RHR   & Range         & Notes\\ \hline
-  Reference   & Horiz Plane   & Y     & [0, -180|180] & \\  
-  iOS Chome   & Horiz Plane   & Y     & [-90, 90]     & Full range of rotation not supported. \\  
-  iOS Safari  & Horiz Plane   & Y     & [-90, 90]     & Full range of rotation not supported. \\  
+              & Nulový bod    & PPR   & Rozsah         & Poznámky\\ \hline
+  Reference   & Horizontálne   & A     & [0, -180|180] & \\  
+  iOS Chome   & Horizontálne   & A     & [-90, 90]     & Plný rozsah rotácie nie je podporovaný. \\  
+  iOS Safari  & Horizontálne   & A     & [-90, 90]     & Plný rozsah rotácie nie je podporovaný. \\  
   Android & & & & \\  
-  Chrome      & Horiz Plane   & Y     & [-90, 90]     & Full range of rotation not supported. \\  
-  Stock       & Horiz Plane   & Y     & [-90, 90]     & Full range of rotation not supported. \\  
-  Firefox     & Horiz Plane   & N     & [0, 180|-180] & Back to front \\
+  Chrome      & Horizontálne   & A     & [-90, 90]     & Plný rozsah rotácie nie je podporovaný. \\  
+  Stock       & Horizontálne   & A     & [-90, 90]     & Plný rozsah rotácie nie je podporovaný. \\  
+  Firefox     & Horizontálne   & N     & [0, 180|-180] & Rotácie pokračuje naspäť na začiatok \\
   \hline
   \end{tabular}
   \caption[Beta rotácia gyroskopu]{Beta rotácia gyroskopu}
 \end{table}
 
-Under iOS as well as the stock Android browser and Chrome for Android, the rotation goes the right direction from the horizontal plane however once it hits the maximal or minimal point at (90 | -90 degrees) it simply starts to decrease again, rather than provide the full rotation.
+V iOS zariadeniach rovako ako v Android prehliadači a Chrome pre Android hodnoty rotácie od počiatku stúpajú správne. Ale keď rotácia nadobudne svoje maximum, čo je 90 a -90 stupňov, tak jej hodnoty začnú postupne klesať. Nie je tak podporovaný celý rozsah rotácie.
 
-In FF on android the rotation is back to front but it does go through the full range to 180 degrees. However under firefox the value is -90 when the top is point upwards and 90 when the top of the device points downwards. This is a reversing of the RHR.
+Vo Firefoxe pre Android je rotácia implementovaná opačným smerom a nie je dodržané špecifikované pravidlo pravej ruky. Je však podporovaný celý rozsah rotácie. Najskôr klesne k hodnote -180 stupňov, čo sa pri pokračujúcej rotácii zmení na kladnú hodnotu a potom klesá k nule.
+
 
 % paragraph beta (end)
 
 \paragraph{Gamma} % (fold)
 \label{par:gamma}
 
+Rotácia okolo osi Y nadobúda hodnoty rotácie gamma. Špecifikácia definuje nulový bod v horizontálnej polohe. Ale aj v tomto smere rotácie sú problémy s rozsahom rotácie, ale to je spôsobené najmä samotnou špecifikáciou zo strany W3C, nakoľko v nej sa nachádza rozsah len od -90 po 90 stupňov, čo je celkovo 180 a nie je tak pokryté celé otočenie.
 
-The spec defines the zero point as being level in the horizontal place. Again there are some issues with ranges and some implied issues with how the W3C have defined this as they are assuming only 90 degrees of rotation around the Y axis is relevant.
-
-The range is tested by holding the device level in the horizontal plane and confirming a zero point. The device it then rotated around the Y axis 90 degrees clockwise (screen faces right) then again (screen faces down) and then through the other 180 degrees back to the origin.
+Rozsah hodnôt bol testovaný pri držaní zariadenia v horizontálnej polohe a natočením na nulový bod. Zariadenie bolo potom otáčané okolo osi Y o 90 stupňov v smere hodinových ručičiek tak, že jeho displej smeroval vpravo. Potom nasledovalo otoče o ďalších 90 stupňov tak, že zariadenie smerovalo dolu. Na koniec sa dokočilo zostávajúcich 180 stupňov rotácie do pôvodného stavu.
 
 \begin{table}[H]
   \begin{tabular}{ | l | l | l | l | l |}
   \hline
-              & Zero point    & RHR   & Range         & Notes\\ \hline
-  Reference   & Horiz Plane   & Y     & [0, 90|-90]   & Poor definition by the W3C \\  
-  iOS Chome   & Horiz Plane   & Y     & [0, 180|-180] & Full range of rotation not supported \\  
-  iOS Safari  & Horiz Plane   & Y     & [0, 180|-180] & Full range of rotation not supported. \\  
+              & Nulový bod    & PPR   & Rozsah         & Poznámky\\ \hline
+  Reference   & Horizontálne   & A     & [0, 90|-90]   & Zlá definícia od W3C \\  
+  iOS Chome   & Horizontálne   & A     & [0, 180|-180] & Plný rozsah rotácie nie je podporovaný \\  
+  iOS Safari  & Horizontálne   & A     & [0, 180|-180] & Plný rozsah rotácie nie je podporovaný. \\  
   Android & & & & \\  
-  Chrome      & Horiz Plane   & Y     & [0, 270|-90]  & Odd range to cope with the gaps \\  
-  Stock       & Horiz Plane   & Y     & [0, 270|-90]  & Odd range to cope with the gaps \\  
-  Firefox     & Horiz Plane   & N     & [0, -90|90]   & Range back to front \\
+  Chrome      & Horizontálne   & A     & [0, 270|-90]  & Upravený rozsah rotácie definuje natočenie \\  
+  Stock       & Horizontálne   & A     & [0, 270|-90]  & Upravený rozsah rotácie definuje natočenie \\  
+  Firefox     & Horizontálne   & N     & [0, -90|90]   & Rozsah rotácie pokračuje naspäť na začiatok \\
   \hline
   \end{tabular}
   \caption[Gamma rotácia gyroskopu]{Gamma rotácia gyroskopu}
 \end{table}
 
-This is poor definition by the W3C as it implies rotation only happens to 90 degrees from the horizontal plane, thus causing an issue when you go under this.
+Zlá definícia rotácie od W3C špecifikuje rotáciu len po hodnotu 90 stupňov z horizontálnej polohy, čo spôsobuje problémy pri väčšom natočení zariadenia.
 
-Under iOS rotation starts from the horizontal plan with the screen facing up as the zero point. Rotating around the Y axis so that the screen is facing down will result in a value of 180 or -180. If the rotation occurs clockwise the values increase through the +ive range, if the rotation is anti-clockwise then the values increase through the -ive range. Thus resting the R edge (L edge upwards) the value is 90, the reverse (resting on the L edge, R edge up) means the value is -90.
+V iOS rotácia nadobúda nulový bod v horizontálnej podobe s displejom smerujúcim hore. Otočením zariadenia okolo osi Y tak, že obrazovka bude smerovať smerom dole bude aktuálne gamma natočenie nadobúdať hodnotu 180, respektíve -180 stupňov. Ak sa rotácia uskutočňuje v smere hodinových ručičiek, tak hodnoty rotácie sa postupne zvyšujú v kladných číslach. Ak rotácia ide opačným smerom proti smeru hodinových ručičiek, tak hodnoty rotácie sa zmenšujú. Pri natočení zariadenia smerom na bok lavou strano hore je hodnota rotácia 90 stupňov, na opačnej strane pri smerovaní pravej hrany smerom hore je to -90 stupňov.
 
-The Chrome for Android and stock android browsers create the right rotational vales for the +-90 range however the gap after 90 on the clockwise rotation is filled with increasing +ive values until it reaches the -90 value. This provides an opportunity to know exactly how far the device is rotated around the Y axis but can't be replicated by any of the others.
+Chrome pre Android a vstavaný Android prehliadač majú spravné hodnoty rotácie od -90 po +90 stupňov. Ale po natočené zariadenia o viac ako 90 stupňov v smere hodinových ručičiek hodnota rotácie naďalej stúpa až po hodnotu 270 stupňov, čo je zároveň aj hodnota -90. Toto poskytuje možnosť presne vedieť veľkosť natočenia zariadenia.
 
-Firefox reverses its range the same way as it does on Beta. The range is correct however rotation clockwise results in a -ive number and the reverse.
+Firefox má aj pri rotácii okolo osi Y podobný problém, a to je že hodnoty sú opačné a nedodržiava špecifikované pravidlo pravej ruky. Rozsah je správny, ale rotácie v smere hodinových ručičiek nadobúdajú záporné hodnoty a naopak.
 
 % paragraph gamma (end)
 
@@ -725,6 +738,20 @@ Jediné možné riešenie je len v spolupráci s natívnou aplikáciou, aj tak s
 % subsubsection otvorenie_v_aplik_cii (end)
 
 % subsection komponenty (end)
+
+\subsection{Nástroje} % (fold)
+\label{sub:n_stroje}
+
+\subsubsection{Detekcia} % (fold)
+\label{ssub:detekcia}
+
+Pre potreby rozpoznávania platformy v aplikácii bol vytvorený modul detekcie podľa jedinečného ,,user agent'' textu. Modul umožňuje detekovať iOS a Android zariadenia. Rozpoznávanie prebieha na základe regulárneho výrazu, kde pri metóde detekcie iOS zariadenia sa kontroluje výsky slov ,,iPhone'', ,,iPad'' alebo ,,iPod'', ktoré jedinečne definujú platformu. Pri Android zariadeniach je detekcia jednoduchšia, pretože stačí ak sa v identifakačnom texte nachádza slovo ,,Android''.
+
+Pri konfigurácii webovej aplikácie je možné aj aktálny ,,user agent'' text nahradiť vlasnou hodnotou, takže prehliadač sa vždy môže správať ako požadované zariadenie.
+
+% subsubsection detekcia (end)
+
+% subsection n_stroje (end)
 
 % section n_stroj_na_overenie (end)
 
