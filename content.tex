@@ -131,18 +131,23 @@ Podobné výsledky \cite{mobilebooktouch} sú aj pri novej kategórii zariadení
 
 \paragraph{Reč} % (fold)
 
+Ovládanie aplikácii a zariadení pomocou reči môže byť užitočné pre prípady spojené s indispozíciou používateľov najmä v spojení so slabším zrakom či fyzickým postihnutím \cite{SpeechRecognition}.
+
 Možnosť rozpoznania reči vo webovej aplikácii je v súčasnosti experimentálna novinka a jej štandartizacia je zatiaľ veľmi ďaleko. Používateľ samozrejme musí explicitne povoliť použitie mikrofónu pre webovú aplikáciu. Špecifikácia je zatiaľ len vo forme návrhu a nie je ani zaradená do W3C štandartu HTML5 \cite{webspeechapi}. Podpora v prehliadočoch s enginom Blink sa však už nachádza od začiatku roku 2013 a základná funkčnosť bola odprezentovaná v rámci konferencie Google IO 2013. Rozpoznanie reči prebieha vzdialene na serveroch patriacich Googlu a zatiaľ neexistuje možnosť rozpoznania lokálne \cite{moreawesomeweb}.
 
 S rozpoznaním reči je spojená aj jeho syntéza, alebo preklad textu na reč. Tá je na tom v súčasnosti čo sa týka podpory a implementácie v prehliadačoch ešte horšie. Experimentálna funkčnosť existuje len v posledných buildoch prehliadočov. Našťastie sa táto funkcionala dá čiastočne nahradiť volaniami vzdialených webových služieb ako je napríklad ,,Google Translate''. Takáto syntéza však už neprebieha na zariadení, ale len sa zo serveru príjme zvuková nahrávka, ktorá sa následne prehrá.
 
-\paragraph{Kamera} % (fold)
+\newpage
+\paragraph{Pohyb} % (fold)
+
+Rozpoznanie pohybu v reálnom čase je možné určiť podľa udalostí uskutočnených používateľom. Jednou z možností je použiť algoritmus na základe zmeny osvetlenia objektu \cite{MotionIllumination} a tým určiť smer jeho pohybu.
 
 Moderné webové prehliadače umožňujú získať prístup aj k video streamu z web kamery používateľa. Na prístup je rovnako potrebné povolenie od používateľa. Tento video stream prebieha vo zvolenej frekvencii a sa dá odchytiť a následne uložiť do elementu canvas, kde už sa k jednotlivým vzorkám pristupuje ako k obrázku. Je možné odfiltrovať okolie a zachovať len podstatné informácie na základe ktorých sa získa pohyb, respektíve gesto od používateľa.
 
 
 \paragraph{Accelerometer a Gyroskop} % (fold)
 
-Medzi dlhodobo podporované senzory najmä v mobilných zariadeniach patria accelerometer a gyroskop. Je k nim umožnený prístup priamo z webovej aplikácie aj bez priameho povolenia od používateľa.
+Medzi dlhodobo podporované senzory najmä v mobilných zariadeniach patria accelerometer a gyroskop. Je k nim umožnený prístup priamo z webovej aplikácie aj bez priameho povolenia od používateľa. Dáta z nich získané je zároveň možné použiť na vytvorenie a rozpoznanie giest použitých na ovládanie aplikácie \cite{AccelerationAndGyroscope}.
 
 Accelerometer slúží na získanie zrýchlenia zariadenia v osiach x, y a z, gyroskop na získanie uhlového zrýchlenia okolo týchto osí. Ich rozdiel je znázornený na nasledujúcom obrázku:
 
@@ -156,7 +161,7 @@ Accelerometer slúží na získanie zrýchlenia zariadenia v osiach x, y a z, gy
 
 % subsubsection interak_n_prostriedky (end)
 
-
+\newpage
 \subsubsection{Pripojenie} % (fold)
 \label{ssub:pripojenie}
 
@@ -360,7 +365,8 @@ Kombináciou techník Responsive Design a Server-side Adaptation vznikla novšia
 \newpage
 \section{Nástroj na overenie} % (fold)
 \label{sec:n_stroj_na_overenie}
-Ako nástroj na overenie sa vytvorila knižnica s názvom Angular-Adaptive \footnote{Angular-Adaptive \url{http://angular-adaptive.github.io/} je sprievodca vo svete adaptívneho web dizajnu.} do populárneho JavaScriptového frameworku AngularJS \footnote{AngularJS \url{http://angularjs.org/} je populárny JavaScriptový framework, ktorý rozširuje HTML o nové možnosti pre webové aplikácie.}, kde sa následne skúmali možnosti adaptácie komponentov pomocou metódy progressive enhancement. Hlavným dôvodom výberu AngularJS bola možnosť vytvárania modulov, ktoré sa dajú následne jednoducho použivať vo webových projektoch. Takáto podpora vytvárania externých modulov bude už o pár rokov natívna v prehliadačoch vďaka webovým komponentom \cite{webcomponents}. Samotná distribúcia modulov prebieha pomocou balíčkovaciemu nástroja Bower \footnote{Bower \url{http://bower.io/} je balíčkovací manažér pre web.}.
+
+V tejto časti práce sa venujem návrhu jednotlivých súčastí systému. Ako nástroj na overenie analyzovaných metód sa vytvorila knižnica s názvom Angular-Adaptive \footnote{Angular-Adaptive \url{http://angular-adaptive.github.io/} je sprievodca vo svete adaptívneho web dizajnu.} do populárneho JavaScriptového frameworku AngularJS \footnote{AngularJS \url{http://angularjs.org/} je populárny JavaScriptový framework, ktorý rozširuje HTML o nové možnosti pre webové aplikácie.}, kde sa následne skúmali možnosti adaptácie komponentov pomocou metódy progressive enhancement. Hlavným dôvodom výberu AngularJS bola možnosť vytvárania modulov, ktoré sa dajú následne jednoducho použivať vo webových projektoch. Takáto podpora vytvárania externých modulov bude už o pár rokov natívna v prehliadačoch vďaka webovým komponentom \cite{webcomponents}. Samotná distribúcia modulov prebieha pomocou balíčkovaciemu nástroja Bower \footnote{Bower \url{http://bower.io/} je balíčkovací manažér pre web.}, ktorý je v súčasnosti štandartným distibučným miestom webových komponentov.
 
 \begin{figure}[H]
   \centering
@@ -370,51 +376,144 @@ Ako nástroj na overenie sa vytvorila knižnica s názvom Angular-Adaptive \foot
   \label{fig: angularadaptive}
 \end{figure}
 
+\newpage
+Celý systém je možné rozdeliť do troch na sebe navzájom nezávislých logických celkov skladajúcich sa z nasledujúcich častí:
+
+\begin{enumerate}
+  \item alternatívne spôsoby ovládania webovej apliekácie, kde sa vytvorili knižnice na ovládanie pomocou reči, pohybu a gyroskopu
+  \item adaptácie webových komponentov použitých v aplikáciách, kde sa skúmali hlavne ich možnosti prispôsobenia sa jednotlivým zariadeniam a internetovému pripojeniu používateľa
+  \item nástroje použité na implementáciu aplikácie
+\end{enumerate}
+
+V nasledujúcich častiach kapitoly opisujem návrh implementácie jednotlivých súčastí systému.
+
 \subsection{Alternatívne spôsoby ovládania} % (fold)
 \label{sub:alternat_vne_sp_soby_ovl_dania}
 
-Príchod mobilných zariadení priniesol a spopularizoval nový spôsob interakcie - ovládanie zariadenia pomocou dotyku. Ten však vždy nemusí byť ten najvýhodnejší najmä v prostredí webových aplikácií. Najmä mobilné zariadenia sú vybavené gyroskopom ktorý môže uľahčiť ovládanie aplikácie len vďaka nakláňaniu zariadenia do strán. Podobne môže reagovať zariadenie sledovaním okolia vďaka vstupu z webovej kamery, ktorá je vstavané v množstve zariadení. Typickým senzorom v zariadeniach je mikrofón umožňujúci zaznamenať zvuk, z ktorého sa analyzujú rečové povely a tie vedia zefektívniť ovládanie aplikácie.
+Príchod mobilných zariadení priniesol a spopularizoval nový spôsob interakcie - ovládanie zariadenia pomocou dotyku. Ten však vždy nemusí byť ten najvýhodnejší najmä v prostredí webových aplikácií. Súčasné moderné zariadenia obsahujú množstvo senzorov. Najmä mobilné zariadenia sú vybavené gyroskopom ktorý môže uľahčiť ovládanie aplikácie len vďaka nakláňaniu zariadenia do strán. Podobne môže reagovať zariadenie sledovaním okolia vďaka vstupu z webovej kamery, ktorá je vstavané v množstve zariadení. Typickým senzorom v zariadeniach je mikrofón umožňujúci zaznamenať zvuk, z ktorého sa analyzujú rečové povely a tie vedia zefektívniť ovládanie aplikácie.
 
 \subsubsection{Reč} % (fold)
 \label{ssub:re_}
 
-Ovládanie mobilných zariadení pomocou rečových povelov sa v posledných rokoch teší narastajúcej popularite. Rozpoznávanie je ale špecifické pre jednotlivé mobilné platformy. Javascriptové Web Speech API však umožňuje pridanie rozpoznania reči aj do webovej aplikácie. Cieľom je umožniť ovládanie aplikácie zadávaním statických povelov, ale aj ovládať dynamicky vytvárané entity. Na ich základe bol vytvorený modul ktorý umožňuje pridať kompletné ovládanie webovej aplikácie. Používateľ všal musí povoliť prístup aplikácie k mikrofónu. Po jeho potvrdení už prebieha kontinuálne rozpoznávanie reči.
+Ovládanie mobilných zariadení pomocou rečových povelov sa v posledných rokoch teší narastajúcej popularite. Rozpoznávanie je ale špecifické pre jednotlivé mobilné platformy. Javascriptové Web Speech API však umožňuje pridanie rozpoznania reči aj do webovej aplikácie. 
+
+Cieľom je umožniť ovládanie aplikácie zadávaním statických povelov, ale aj ovládať dynamicky vytvárané entity v aplikácii nezávislé od zvoleného jazyka používateľa. Ovládanie aplikácie by malo prebiehať kontinuálne bez akejkoľvek ďalšej potrebnej interakcie používateľa. Na ich základe bol vytvorený modul ktorý umožňuje pridať kompletné ovládanie webovej aplikácie. Používateľ všal musí povoliť prístup aplikácie k mikrofónu. Po jeho potvrdení už prebieha kontinuálne rozpoznávanie reči.
 
 Po pridaní modulu do webovej aplikácie je potrebné si ho nakonfigurovať. Musia sa vytvoriť úlohy, ktoré definujú správanie aplikácie a prípadne aj reč, v ktorej prebieha rozpoznávanie. Implementované rozpoznávanie reči v prehliadači Google Chrome podporuje 32 rôznych jazykov a ďalšie prízvuky vrátane slovenčiny.
 
-Rozpoznanie úloh prebieha na základe regulárneho výrazu. Keď sa aktuálne nastavený jazyk rozpoznávania zhoduje s jazykom v úlohe a rozpoznaný text spĺňa podmienku regulárneho výrazu, tak sa zavolá asociovaná callback funkcia. Tá v parametri obsahuje rozpoznaný text, s ktorým sa dá ďalej pracovať. 
+Rozpoznanie úloh prebieha na základe regulárneho výrazu definovaného v konfigurácii danej úlohy. Vďaka tomu je zaručené, že ako rozpoznaný text sa získa dynamicky reťazec s ktorým je možné ďalej v aplikácii pracovať. 
 
-Príklad konfigurácie na pridanie novej úlohy má nasledujúci tvar:
+Nakoľko je v aplikácii dôležitá viacjazyčná podpora je potrebné ju správne definovať rozlíšením kódu jazyka úlohy. Keď sa aktuálne nastavený jazyk rozpoznávania zhoduje s jazykom v úlohe a rozpoznaný text spĺňa podmienku regulárneho výrazu, tak sa zavolá asociovaná callback funkcia. Tá v parametri obsahuje rozpoznaný text v podobe textového reťazca, s ktorým sa dá ďalej pracovať. Príklad konfigurácie na pridanie novej úlohy má nasledujúci tvar:
 
-\begin{verbatim}
+\begin{lstlisting}
 'someTask': {
   'regex': /^do .+/gi,
   'lang': 'en-US',
   'call': function(utterance){
-    // DO SOMETHING
+    // do something with utterance
   }
 }
-\end{verbatim}
+\end{lstlisting}
 
-Konfiguráciu je možné zavolať globálne v rámci aplikácie alebo dynamicky vďaka podpore regulárneho výrazu pre dynamicky vytvárané elementy. Napríklad ak sa v aplikácii pracuje so zoznamom úloh, tak globálne je možné obsluhovať pridanie novej úlohy a dynamicky vytvárané elementy môžu mať vlastnú obsluhu, ktorá počúva na ich meno. Diagram navrhnutého algoritmu ovládania webovej aplikácie pomoc reči sa nachádza na nasledujúcom obrázku:
+
+Takýchto konfigurácií je možné pridať ľubovoľný počet. Takto navrhnutú konfiguráciu je možné zavolať globálne v rámci aplikácie alebo dynamicky vďaka podpore regulárneho výrazu a frameworku AngularJS pre dynamicky vytvárané elementy. V prípade globálneho volania stačí použiť samotnú konfiguráciu:
+
+\begin{lstlisting}
+$speechRecognition.listenUtterance(
+  $scope.recognition['en-US']['someTask']
+);
+\end{lstlisting}
+
+Pri dynamicky vytváraných elementoch je okrem samotnej konfigurácie s regulárnym výrazom potrebné pridať aj vstupný prvok elementu voči ktorému sa bude rozpoznávanie vykonávať. Takto sa vzájomne rozlíšia jednotlivé dynamické elementy a asociovaná úloha sa vykoná len pre jeden prvok.
+
+\begin{lstlisting}
+$scope.todos = ['buy milk', 'write essay'];
+
+<li ng-repeat="todo in todos">
+  <div speechrecognition="{'tasks': recognition['en-US']['someTask'], 'input': todo}">{{todo}}</div>
+</li>
+\end{lstlisting}
+
+Napríklad ak sa v aplikácii pracuje so zoznamom úloh, tak globálne je možné obsluhovať pridanie novej úlohy a dynamicky vytvárané elementy môžu mať vlastnú obsluhu, ktorá počúva na ich meno. 
+
+Niekedy je potrebné v aplikácii na istý čas ignorovať ovládanie pomocou reči. Kvôli takýmto prípadom sa pridala možnosť jeho nastavenia v podobe metódy payAttention. Diagram navrhnutého algoritmu ovládania webovej aplikácie pomoc reči sa nachádza na nasledujúcom obrázku:
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{diagram/speech.png}
+  \includegraphics[width=0.75\textwidth]{diagram/speech.png}
   \caption[Algoritmus ovládania aplikácie pomocou reči]{
     Algoritmus ovládania aplikácie pomocou reči}
   \label{fig: diaspeech}
 \end{figure}
 
-% subsubsection re_ (end)
+Použitie regulárneho výrazu pri konfigurácii úlohy má samozrejme aj nevýhodu. Najväčšou je potrebnosť presného určenia výrazu, nakoľko v opačnom prípade sa môžu detekovať aj nesprávne príkazy. Nevyhnutnosťou je aj stále pripojenie na internet kvôli vzdialenému rozpoznaniu reči, pričom samotné rozpoznanie nemusí byť vždy správne.
 
+% subsubsection re_ (end)
 
 \subsubsection{Pohyb} % (fold)
 \label{ssub:pohyb}
 
-Ovládanie webovej aplikácie pohybom prebieha vďaka webovej kamere. Cieľom je rozpoznať základné smery pohybov používateľa a umožniť na ne namapovať funkcionalitu aplikácie. Zachytený video stream sa sníma s frekvenciou 60 Hz. Každý jeden snímok je získaný z kamery a vykreslený do canvasu. Je tvorený množinou pixelov s rgba hodnotami a ten sa následne upraví pomocou hsv filtra aplikovaného na všetky pixely aby sa detekovali oblasti s kožou. Upravený snímok je tvorený dvomi farbami: tmavou znamenajúcou kožu a bielou pre ostatné oblasti.
+Ovládanie webovej aplikácie pohybom prebieha vďaka webovej kamere. Cieľom riešenia je rozpoznať základné smery pohybov používateľa a umožniť na ne namapovať funkcionalitu aplikácie, ktorá sa vykoná po ich správnom rozpoznaní. 
 
-Následne prebieha ďalšie upravovanie pri ktorom sa detekuju hrany. Ich detekcia prebieha na základe rozdielov farebnosti pixelov posledných dvoch snímkov s aplikovaným filtrom kože. Opäť vznikne snímok tvorený dvomi farbami, ale tentokrát tmavá farba sa nachádza len na hranách a biela na ostatných častiach obrázku.
+Video sa sníma kontinuálne a zachytený video stream z kamery je s frekvenciou 60 fps. Každý jeden snímok je následne vykreslený do elementu canvas, v ktorom je možné s ním pracovať. Ten je tvorený množinou pixelov s rgba hodnotami.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth]{img/motion/video.png}
+  \caption[Vizualizácia videa zachyteného web kamerou]{
+    Vizualizácia videa zachyteného web kamerou}
+  \label{fig: motion-video}
+\end{figure}
+
+Získaný obrázok sa následne upraví pomocou hsv filtra aplikovaného na všetky pixely aby sa detekovali oblasti s kožou používateľa, pričom hsv filter je možné nakonfigurovať na vlastné hodnoty. Vďaka týmto oblastiam je rozpoznaný používateľ a je možné spracovávať jednotlivé smery pohybov. Upravený snímok je tvorený dvomi farbami: tmavou znamenajúcou kožu a bielou pre ostatné oblasti. Rozpoznanie prebieha nasledovne:
+
+\begin{lstlisting}
+if ( (
+    (hsv[0] > hsvFilter.huemin && hsv[0] < hsvFilter.huemax) || 
+    (hsv[0] > hsvFilter.losemin && hsv[0] < losemax)
+  ) && 
+  (hsv[1] > hsvFilter.satmin && hsv[1] < hsvFilter.satmax) &&
+  (hsv[2] > hsvFilter.valmin && hsv[2] < hsvFilter.valmax)
+) {
+  skinFilter[pix] = r;
+  skinFilter[pix+1] = g;
+  skinFilter[pix+2] = b;
+  skinFilter[pix+3] = a;
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth]{img/motion/skin.png}
+  \caption[Vizualizácia videa po aplikovaní filtra detekcie kože]{
+    Vizualizácia videa po aplikovaní filtra detekcie kože}
+  \label{fig: motion-skin}
+\end{figure}
+
+Ako je možné vidieť, detekcia kože nie je úplne správna a na základe hsv sa detekuju aj iné oblasti. Následne prebieha ďalšie upravovanie pri ktorom sa detekuju len samotné hrany. Ich detekcia prebieha na základe rozdielov farebnosti pixelov posledných dvoch snímkov \cite{MotionIllumination} s aplikovaným filtrom kože. Zistí sa celkový rozdiel v rgba hodnote každého pixelu a pokiaľ nastala výrazná zmena, tak sa detekuje ako hrana a zafarbí sa:
+
+\begin{lstlisting}
+var rgbaDelta = Math.abs(draw.data[pix] - lastDraw.data[pix]) +
+  Math.abs(draw.data[pix+1] - lastDraw.data[pix+1]) +
+  Math.abs(draw.data[pix+2] - lastDraw.data[pix+2]);
+
+if (rgbaDelta > treshold.rgb){
+  edge.data[pix] = 0;
+  edge.data[pix+1] = 0;
+  edge.data[pix+2] = 0;
+  edge.data[pix+3] = 255;
+}
+\end{lstlisting}
+
+Opäť vznikne snímok tvorený dvomi farbami, ale tentokrát tmavá farba sa nachádza len na hranách a biela na ostatných častiach obrázku. Obrázok definuje miesta, na ktorých sa medzi snímkami vykonával pohyb. Na základe sekvencie takýchto obrázkov hrán vieme presnejšie určiť smer pohybu používateľa.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth]{img/motion/edges.png}
+  \caption[Vizualizácia videa po aplikovaní filtra detekcie hrán]{
+    Vizualizácia videa po aplikovaní filtra detekcie hrán}
+  \label{fig: motion-edges}
+\end{figure}
 
 Keď je obrázok v už takomto stave tak je možné začať rozpoznávať predvádzané gesto. Spočíta sa celkový počet zmenených bodov a pomer zmenených bodov v osiach x a y obrázka. Postupným hromadením snímkov a spočítavaním všetkých zmenených bodov sa určí celkový smer pohybu. Celkovo sa rozpoznávajú štyri základné gestá, kde po úspešnom rozpoznaní sa vykonajú priradené funkcie:
 
@@ -425,7 +524,17 @@ Keď je obrázok v už takomto stave tak je možné začať rozpoznávať predv�
   \item onSwipeDown - pohyb zhora dole 
 \end{itemize}
 
-Citlivosť aplikovania filtrov a rozpoznávania gesta je samozrejme možné konfigurovať nastavením tresholdu a úpravou hsv filtra. Vytvorený modul okrem toho podporuje aj ďalšie udalosti na ktoré je možné viazať funkcie akými sú začiatok a koniec snímania pretože na prístup k web kamere je potrebné explicitné povolenie od používateľa.  Diagram navrhnutého algoritmu ovládania webovej aplikácie pomoc pohybu sa nachádza na nasledujúcom obrázku:
+Príklad nastavenia funkcie na odchytenie gesta má nasledujúci tvar, kde sa asociuje callback funkcia, ktorá sa má následne v programe vykonať.
+
+\begin{lstlisting}
+$motion.onSwipeRight(function(){
+  // DO SOMETHING
+});
+\end{lstlisting}
+
+Citlivosť aplikovania filtrov a rozpoznávania gesta je samozrejme možné konfigurovať nastavením tresholdu a úpravou hsv filtra. Problémy nastávajú najmä pri extrémnych vonkajších podmienkach, ktorými sú nízke alebo príliš vysoké osvetlenie. Tie sa však dajú eliminovať jeho zmenou.
+
+Vytvorený modul podporuje aj ďalšie udalosti na ktoré je možné viazať funkcie, akými sú začiatok a koniec snímania, pretože na prístup k web kamere je potrebné explicitné povolenie od používateľa. Diagram navrhnutého algoritmu ovládania webovej aplikácie pomoc pohybu sa nachádza na nasledujúcom obrázku:
 
 \begin{figure}[H]
   \centering
@@ -441,36 +550,9 @@ Citlivosť aplikovania filtrov a rozpoznávania gesta je samozrejme možné konf
 V aplikácii je možné pridať aj zobrazenie aktuálneho náhľadu z webovej kamery a to použitím vytvorenej direktívy pridaním atribútu ,,adaptive-motion'' ku canvas elementu. Atribút môže nadobúdať nasledujúce hodnoty:
 
 \begin{itemize}
-  \item video - zobrazí aktuálny náhľad z web kamery
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.3\textwidth]{img/motion/video.png}
-  \caption[Vizualizácia videa zachzteného web kamerou]{
-    Vizualizácia videa zachzteného web kamerou}
-  \label{fig: motion-video}
-\end{figure}
-
-  \item skin - zobrazí video stream po aplikovaní filtra rozpoznania kože
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.3\textwidth]{img/motion/skin.png}
-  \caption[Vizualizácia videa po aplikovaní filtra detekcie kože]{
-    Vizualizácia videa po aplikovaní filtra detekcie kože}
-  \label{fig: motion-skin}
-\end{figure}
-
-  \item edge - zobrazí video stream po aplikovaní filtra rozpoznania hrán
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.3\textwidth]{img/motion/edges.png}
-  \caption[Vizualizácia videa po aplikovaní filtra detekcie hrán]{
-    Vizualizácia videa po aplikovaní filtra detekcie hrán}
-  \label{fig: motion-edges}
-\end{figure}
-
+  \item video - zobrazí aktuálny náhľad z web kamery zariadenia, ktorého detail je zobrazený na obrázku \ref{fig: motion-video}
+  \item skin - zobrazí video stream po aplikovaní filtra rozpoznania kože, ktorého detail je zobrazený na obrázku \ref{fig: motion-skin}
+  \item edge - zobrazí video stream po aplikovaní filtra rozpoznania hrán, ktorého detail je zobrazený na obrázku \ref{fig: motion-edges}
 \end{itemize}
 
 
@@ -481,17 +563,35 @@ V aplikácii je možné pridať aj zobrazenie aktuálneho náhľadu z webovej ka
 \subsubsection{Gyroskop} % (fold)
 \label{ssub:gyroskop}
 
-Jednou z možností ovládania webovej aplikácie je použitie gyroskopu. Na tento prípad som vytvoril modul pomocou ktorého je možné v aplikácií skrolovať len pomocou natáčania zariadenia do strán bez ďalšej potrebnej interakcie používateľa. Modul sa inacializuje pridaním atribútu ,,adaptivescroll'' k elementu, v ktorom má prebiehať skrolovanie. Tým môže byť napríklad element ,,body'', ktorý zohľadňuje skrolovanie celej webovej stránky, alebo aj nejaký iný vnorený element. Následne stačí zavalať metódu so začatím sledovania polohy zariadenia, v ktorej sa môže upraviť ignorovaná hranica natočenia v uhloch a skrolovanie prebieha automaticky. V prípade potreby je toto sledovanie možné aj ukončiť.
+Jednou z možností ovládania webovej aplikácie je použitie gyroskopu. Na tento prípad som vytvoril modul pomocou ktorého je možné vo webovej aplikácií skrolovať len pomocou natáčania zariadenia do strán bez ďalšej potrebnej interakcie používateľa. Cieľom je zároveň umožniť ovplyvniť samotnú rýchlosť skrolovania na základe veľkosti natočenia oproti počiatočnej pozícii zariadenia.
 
-Po začatí sledovania aktuálneho natočenia zariadenia sa uloží jeho počiatočná hodnota, ktorá sa používa ako relatívna hranica medzi stranami na ktoré prebieha skrolovanie. Postupným natáčaním zariadenia v smere hodinových ručičiek okolo osi beta od počiatočnej hodnoty k používateľovi sa vykonáva skrolovanie elemntu smerom dola, natáčaním na opačnú stranu od počiatočnej hodnoty prebieha skrolovanie hore.
+Modul sa inacializuje pridaním atribútu ,,adaptivescroll'' k elementu, v ktorom má prebiehať skrolovanie. Tým môže byť napríklad element ,,body'', ktorý zohľadňuje skrolovanie celej webovej stránky, alebo aj nejaký iný vnorený element. V takom prípade však skrolovanie prebieha len v rámci daného elementu.
 
-Do úvahy pri zohľadňovaní rýchlosti skrolovania sa berie aj absolútna hodnota natočenia zariadenia od počiatočnej hodnoty zariadenia. Čím je táto hodnota väčšia, tým rýchlejšie prebieha skrolovanie. Samotný proces skrolovania prebieha vďaka číselnej zmene offsetu elementu. Plynulosť skrolovania je zaručená použitím animácii pomocou requestAnimationFrame. Tá prebieha s frekvenciou 60 Hz a je časovaná priamo prehliadačom. Tej však chýba podpora v straších verziách, v takom prípade musí byť použítý manuálny časovač aplikácie.
+\begin{lstlisting}
+<body adaptivescroll> </body>
+\end{lstlisting}
 
-Okrem skrolovania modul obsahuje aj ďalšie metódy onalpha, onbeta a ongamma, ktorých návratová funkcia sa zavolá vždy po zmene rotácie zariadenia a je ich možné použiť na iné potreby v aplikácii. Funkcia obsahuje parameter absolútnu zmenu pozície v uhloch od počiatočnej k aktuálnej. Diagram navrhnutého algoritmu ovládania webovej aplikácie pomoc gyroskopu sa nachádza na nasledujúcom obrázku:
+Následne stačí zavalať metódu so začatím sledovania polohy zariadenia, v ktorej sa môže upraviť ignorovaná hranica natočenia v uhloch a skrolovanie prebieha automaticky. V prípade potreby je toto sledovanie možné aj ukončiť.
+
+Po začatí sledovania aktuálneho natočenia zariadenia sa uloží jeho počiatočná hodnota, ktorá sa používa ako relatívna hranica medzi stranami na ktoré prebieha skrolovanie. Postupným natáčaním zariadenia v smere hodinových ručičiek okolo osi beta od počiatočnej hodnoty k používateľovi sa vykonáva skrolovanie elementu smerom dolu, natáčaním na opačnú stranu od počiatočnej hodnoty prebieha skrolovanie hore.
+
+Do úvahy pri zohľadňovaní rýchlosti skrolovania sa berie aj absolútna hodnota natočenia zariadenia od počiatočnej hodnoty zariadenia. Čím je táto hodnota väčšia, tým rýchlejšie prebieha skrolovanie. Výpočet rozdielu natočenie zohľadňuje smer rotácie a je určený na základe počiatočnej rotácie, aktuálneho natočenia a celkovej veľkosti rotácie pre danú os:
+
+\begin{lstlisting}
+var getDiff = function(startOrientation, actualOrientation, interval){
+  var d1 = startOrientation - actualOrientation;
+  var d2 = startOrientation - actualOrientation - interval;
+  return (Math.abs(d1) < Math.abs(d2)) ? d1 : d2;
+};
+\end{lstlisting}
+
+Samotný proces skrolovania prebieha vďaka číselnej zmene offsetu elementu. Plynulosť skrolovania je zaručená použitím animácii pomocou requestAnimationFrame. Tá prebieha s frekvenciou 60 fps a je časovaná priamo prehliadačom. Tej však chýba podpora v straších verziách, v takom prípade musí byť použítý manuálny časovač aplikácie.
+
+Okrem skrolovania modul obsahuje aj ďalšie metódy onalpha, onbeta a ongamma, ktorých návratová funkcia sa zavolá vždy po zmene rotácie zariadenia a je ich možné použiť na iné potreby v aplikácii. Funkcia obsahuje parameter absolútnu zmenu pozície v uhloch od počiatočnej k aktuálnej, ktorá sa používa aj pri skrolovaní v aplikácii. Diagram navrhnutého algoritmu ovládania webovej aplikácie pomoc gyroskopu sa nachádza na nasledujúcom obrázku:
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{diagram/scroll.png}
+  \includegraphics[width=1.0\textwidth]{diagram/scroll.png}
   \caption[Algoritmus ovládania aplikácie pomocou gyroskopu]{
     Algoritmus ovládania aplikácie pomocou gyroskopu}
   \label{fig: diascroll}
@@ -788,9 +888,15 @@ Jediné možné riešenie je len v spolupráci s natívnou aplikáciou, aj tak s
 \subsubsection{Detekcia} % (fold)
 \label{ssub:detekcia}
 
-Pre potreby rozpoznávania platformy v aplikácii bol vytvorený modul detekcie podľa jedinečného ,,user agent'' textu. Modul umožňuje detekovať iOS a Android zariadenia. Rozpoznávanie prebieha na základe regulárneho výrazu, kde pri metóde detekcie iOS zariadenia sa kontroluje výsky slov ,,iPhone'', ,,iPad'' alebo ,,iPod'', ktoré jedinečne definujú platformu. Pri Android zariadeniach je detekcia jednoduchšia, pretože stačí ak sa v identifakačnom texte nachádza slovo ,,Android''.
+Pre potreby rozpoznávania platformy v aplikácii bol vytvorený modul detekcie podľa jedinečného ,,user agent'' textu. Modul umožňuje detekovať iOS a Android zariadenia. Rozpoznávanie prebieha na základe regulárneho výrazu, kde pri metóde detekcie iOS zariadenia sa kontroluje výsky slov ,,iPhone'', ,,iPad'' alebo ,,iPod'', ktoré jedinečne definujú platformu. Pri Android zariadeniach je detekcia jednoduchšia, pretože stačí ak sa v identifakačnom texte nachádza slovo ,,Android''. Príklad metódy detekcie má nasledujúci tvar:
 
-Pri konfigurácii webovej aplikácie je možné aj aktálny ,,user agent'' text nahradiť vlasnou hodnotou, takže prehliadač sa vždy môže správať ako požadované zariadenie.
+\begin{lstlisting}
+var isAndroid = function(userAgent){
+  return (/(Android)/gi).test(userAgent);
+}
+\end{lstlisting}
+
+Pri konfigurácii webovej aplikácie je možné aj aktálny ,,user agent'' text nahradiť vlasnou hodnotou, takže prehliadač sa vždy môže správať ako požadované zariadenie. Problém pri detekcii môže nastať, pokiaľ by user agent už bol raz nahradený používateľom, respektíve by sa prestali používať súčasné identifikátory. Potom by sa detekovala nesprávna platforma.
 
 % subsubsection detekcia (end)
 
