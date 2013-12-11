@@ -34,7 +34,7 @@ Výzvou sa tak stáva nie len vytvorenie celkového používateľského rozhrani
 
 % section adapta_n_techniky (end)
 
-\section{Adaptácia} % (fold)
+\section{Adaptácia webových aplikácií} % (fold)
 \label{sec:adapt_cia}
 
 \subsection{Možnosti prispôsobenia} % (fold)
@@ -70,9 +70,12 @@ Viewport je celkové miesto potrebné na zobrazenie webovej stránky. Na mobiln�
 \subsubsection{Interakčné prostriedky} % (fold)
 \label{ssub:interak_n_prostriedky}
 
-Postupom času začína upadať používanie klasických stolových počítačov ovládaných pomocou klávesnice a myši a presadzujú sa nové druhy mobilných zariadení so vstupným interfejsom v podobe dotykovej plochy. Tá sa ako ovládací prostriedok začína presadzovať okrem mobilných zariadení aj v notebookoch. Pri dizajne aplikácie je preto potrebné myslieť aj na takýchto používateľov. Okrem nich však existujú aj iné možnosti ovládania ako sú napríklad sledovanie pohybu očí, natáčanie zariadenia či počúvanie hlasových povelov. Je tak potrebné brať do úvahy aj ďalšie možnosti.
+Postupom času začína upadať používanie klasických stolových počítačov ovládaných pomocou klávesnice a myši a presadzujú sa nové druhy mobilných zariadení so vstupným interfejsom v podobe množstva senzorov, ale hlavne s dotykovou plochou. Tá sa ako ovládací prostriedok začína presadzovať okrem mobilných zariadení aj v notebookoch. Pri dizajne aplikácie je preto potrebné myslieť aj na takýchto používateľov. Okrem nich však existujú aj iné možnosti ovládania ako sú napríklad sledovanie pohybu pomocou web kamery, natočanie a posúvanie zariadenia získané pomocou gyroskupu a accelerometra či počúvanie hlasových povelov zaznamenaných cez mikrofón. Je tak potrebné brať do úvahy aj ďalšie možnosti.
 
 % \newpage
+
+\paragraph{Dotyk} % (fold)
+
 Dôležitým prvkom v prípade mobilných zariadení je možnosť ovládania aplikácii jednou rukou. Mobilné zariadenia sú využívané takmer pri každej príležitesti či vo vonkajšom alebo vnútornom prostredí, preto je potrebné správne prispôsobiť vzhľad a rozmiestnenie ovládacích prvkov. Pre ne platí, že najjednoduchšie dosiahnuteľné časti sú v spodnej strane zariadenia a s postupom k hornému okraju možnosť dosiahnutia klesá \cite{mobilebooktouch}.
 
 \begin{figure}[H]
@@ -125,9 +128,40 @@ Podobné výsledky \cite{mobilebooktouch} sú aj pri novej kategórii zariadení
 \end{figure}
 
 
+
+\paragraph{Reč} % (fold)
+
+Ovládanie aplikácii a zariadení pomocou reči môže byť užitočné pre prípady spojené s indispozíciou používateľov najmä v spojení so slabším zrakom či fyzickým postihnutím \cite{SpeechRecognition}.
+
+Možnosť rozpoznania reči vo webovej aplikácii je v súčasnosti experimentálna novinka a jej štandardizácia je zatiaľ veľmi ďaleko. Používateľ samozrejme musí explicitne povoliť použitie mikrofónu pre webovú aplikáciu. Špecifikácia je zatiaľ len vo forme návrhu a nie je ani zaradená do W3C štandardu HTML5 \cite{webspeechapi}. Podpora v prehliadočoch s enginom Blink sa však už nachádza od začiatku roku 2013 a základná funkčnosť bola odprezentovaná v rámci konferencie Google IO 2013. Rozpoznanie reči prebieha vzdialene na serveroch patriacich Googlu a zatiaľ neexistuje možnosť rozpoznania lokálne \cite{moreawesomeweb}.
+
+S rozpoznaním reči je spojená aj jeho syntéza, alebo preklad textu na reč. Tá je na tom v súčasnosti čo sa týka podpory a implementácie v prehliadačoch ešte horšie. Experimentálna funkčnosť existuje len v posledných buildoch prehliadočov. Našťastie sa táto funkcionala dá čiastočne nahradiť volaniami vzdialených webových služieb ako je napríklad ,,Google Translate''. Takáto syntéza však už neprebieha na zariadení, ale len sa zo serveru príjme zvuková nahrávka, ktorá sa následne prehrá.
+
+\newpage
+\paragraph{Pohyb} % (fold)
+
+Rozpoznanie pohybu v reálnom čase je možné určiť podľa udalostí uskutočnených používateľom. Jednou z možností je použiť algoritmus na základe zmeny osvetlenia objektu \cite{MotionIllumination} a tým určiť smer jeho pohybu.
+
+Moderné webové prehliadače umožňujú získať prístup aj k video streamu z web kamery používateľa. Na prístup je rovnako potrebné povolenie od používateľa. Tento video stream prebieha vo zvolenej frekvencii a sa dá odchytiť a následne uložiť do elementu canvas, kde už sa k jednotlivým vzorkám pristupuje ako k obrázku. Je možné odfiltrovať okolie a zachovať len podstatné informácie na základe ktorých sa získa pohyb, respektíve gesto od používateľa.
+
+
+\paragraph{Accelerometer a Gyroskop} % (fold)
+
+Medzi dlhodobo podporované senzory najmä v mobilných zariadeniach patria accelerometer a gyroskop. Je k nim umožnený prístup priamo z webovej aplikácie aj bez priameho povolenia od používateľa. Dáta z nich získané je zároveň možné použiť na vytvorenie a rozpoznanie giest použitých na ovládanie aplikácie \cite{AccelerationAndGyroscope}.
+
+Accelerometer slúží na získanie zrýchlenia zariadenia v osiach x, y a z, gyroskop na získanie uhlového zrýchlenia okolo týchto osí. Ich rozdiel je znázornený na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/accvsgyro.png}
+  \caption[Accelerometor a gyroskop]{
+    Zaznamenávané údaje pomocou accelerometora a gyroskopu}
+  \label{fig: tnavlaptops}
+\end{figure}
+
 % subsubsection interak_n_prostriedky (end)
 
-
+\newpage
 \subsubsection{Pripojenie} % (fold)
 \label{ssub:pripojenie}
 
@@ -146,7 +180,7 @@ Načítanie webovej stránky sa skladá z viacerých fáz. Okrem samotnej konekt
 	\label{fig: timing}
 \end{figure}
 
-Tieto fázy môžme aj priamo merať pomocou interfacu \url{performance.timing}, ktorý ich zobrazuje priamo v podobe času \cite{1000ms}. Vďaka tomu máme dokonalejší prehľad o používateľovom pripojení a vieme mu tak prispôsobiť jednotlivé komponenty stránky. W3C špecifikácia je vo fáze ,,Recommendation'' \cite{timing}, ale stále hlavnou nevýhodou je chýbajúca podpora v niektorých prehliadačoch. Čiastočnou náhradou je meranie rozdielov dvoch časov, ale tak získame dáta len zo spracovania požiadavky na strane klienta.
+Tieto fázy môžme aj priamo merať pomocou interfacu \url{performance.timing}, ktorý ich zobrazuje priamo v podobe času \cite{1000ms, performancebrowsernetworking}. Vďaka tomu máme dokonalejší prehľad o používateľovom pripojení a vieme mu tak prispôsobiť jednotlivé komponenty stránky. W3C špecifikácia je vo fáze ,,Recommendation'' \cite{timing}, ale stále hlavnou nevýhodou je chýbajúca podpora v niektorých prehliadačoch. Čiastočnou náhradou je meranie rozdielov dvoch časov, ale tak získame dáta len zo spracovania požiadavky na strane klienta.
 
 \begin{figure}[H]
 	\centering
@@ -329,12 +363,400 @@ Kombináciou techník Responsive Design a Server-side Adaptation vznikla novšia
 % subsection adapt_cia (end)
 
 \newpage
-\section{Nástroj na overenie} % (fold)
+\section{Návrh riešenia} % (fold)
 \label{sec:n_stroj_na_overenie}
-Ako nástroj na overenie sa vytvorila knižnica do populárneho JavaScriptového frameworku AngularJS \footnote{AngularJS \url{http://angularjs.org/} je populárny JavaScriptový framework, ktorý rozširuje HTML o nové možnosti pre webové aplikácie.}, kde sa následne skúmali možnosti adaptácie komponentov.
 
+V tejto časti práce sa venujem návrhu jednotlivých súčastí systému. Ako nástroj na overenie adaptácie sa vytvorila knižnica s názvom Angular-Adaptive \footnote{Angular-Adaptive \url{http://angular-adaptive.github.io/} je sprievodca vo svete adaptívneho web dizajnu.} do populárneho JavaScriptového frameworku AngularJS \footnote{AngularJS \url{http://angularjs.org/} je populárny JavaScriptový framework, ktorý rozširuje HTML o nové možnosti pre webové aplikácie.}, kde sa následne skúmali možnosti adaptácie komponentov pomocou metódy progressive enhancement. 
+
+Vytvorenie jednotlivých súčastí knižnice vzišlo z potrieb komunity vývojárov a samotného trhu. Alternatívne možnosti ovládania aplikácii sú veľmi populárne a v prostredí webových aplikácií chýbal nástroj, ktorý by umožnil jednoduchú interakciu používateľa s aplikáciou. Potrebné bolo riešiť aj veľké množstvo zbytočne prenášaných dát pomocou internetu v prostrediach a na zariadeniach, ktoré ich všetky nepotrebujú.
+
+Hlavným dôvodom výberu AngularJS bola možnosť vytvárania modulov, ktoré sa dajú následne jednoducho použivať vo webových projektoch. Takáto podpora vytvárania externých modulov bude už o pár rokov natívna v prehliadačoch vďaka webovým komponentom \cite{webcomponents}. Samotná distribúcia modulov prebieha pomocou balíčkovaciemu nástroja Bower \footnote{Bower \url{http://bower.io/} je balíčkovací manažér pre web.}, ktorý je v súčasnosti štandardným distibučným miestom webových komponentov.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/angularadaptive.png}
+  \caption[Webová stránka vytvoreného projektu angular-adaptive]{
+    Webová stránka vytvoreného projektu angular-adaptive}
+  \label{fig: angularadaptive}
+\end{figure}
+
+\newpage
+Celý systém je možné rozdeliť do troch na sebe navzájom nezávislých logických celkov skladajúcich sa z nasledujúcich častí:
+
+\begin{enumerate}
+  \item alternatívne spôsoby ovládania webovej apliekácie, kde sa vytvorili knižnice na ovládanie pomocou reči, pohybu a gyroskopu
+  \item adaptácie webových komponentov použitých v aplikáciách, kde sa skúmali hlavne ich možnosti prispôsobenia sa jednotlivým zariadeniam a internetovému pripojeniu používateľa
+  \item nástroje použité na implementáciu aplikácie
+\end{enumerate}
+
+V nasledujúcich častiach kapitoly opisujem návrh implementácie jednotlivých súčastí systému.
+
+\subsection{Alternatívne spôsoby ovládania} % (fold)
+\label{sub:alternat_vne_sp_soby_ovl_dania}
+
+Príchod mobilných zariadení priniesol a spopularizoval nový spôsob interakcie - ovládanie zariadenia pomocou dotyku. Ten však vždy nemusí byť ten najvýhodnejší najmä v prostredí webových aplikácií. Súčasné moderné zariadenia obsahujú množstvo senzorov. Najmä mobilné zariadenia sú vybavené gyroskopom, ktorý môže uľahčiť ovládanie aplikácie len vďaka nakláňaniu zariadenia do strán. Podobne môže reagovať zariadenie sledovaním okolia vďaka vstupu z webovej kamery, ktorá je vstavaná v množstve zariadení. Typickým senzorom v zariadeniach je mikrofón umožňujúci zaznamenať zvuk, z ktorého sa analyzujú rečové povely a tie vedia zefektívniť ovládanie aplikácie.
+
+\subsubsection{Reč} % (fold)
+\label{ssub:re_}
+
+Ovládanie mobilných zariadení pomocou rečových povelov sa v posledných rokoch teší narastajúcej popularite. Rozpoznávanie je ale špecifické pre jednotlivé mobilné platformy. Javascriptové Web Speech API však umožňuje pridanie rozpoznania reči aj do webovej aplikácie. 
+
+Cieľom je umožniť ovládanie aplikácie zadávaním statických povelov, ale aj ovládať dynamicky vytvárané entity v aplikácii nezávislé od zvoleného jazyka používateľa. Ovládanie aplikácie by malo prebiehať kontinuálne bez akejkoľvek ďalšej potrebnej interakcie používateľa. Na ich základe bol vytvorený modul ktorý umožňuje pridať kompletné ovládanie webovej aplikácie. Používateľ všal musí povoliť prístup aplikácie k mikrofónu. Po jeho potvrdení už prebieha kontinuálne rozpoznávanie reči.
+
+Po pridaní modulu do webovej aplikácie je potrebné si ho nakonfigurovať. Musia sa vytvoriť úlohy, ktoré definujú správanie aplikácie a prípadne aj reč, v ktorej prebieha rozpoznávanie. Implementované rozpoznávanie reči v prehliadači Google Chrome podporuje 32 rôznych jazykov a ďalšie prízvuky vrátane slovenčiny.
+
+Rozpoznanie úloh prebieha na základe regulárneho výrazu definovaného v konfigurácii danej úlohy. Vďaka tomu je zaručené, že ako rozpoznaný text sa získa dynamicky reťazec s ktorým je možné ďalej v aplikácii pracovať. 
+
+Nakoľko je v aplikácii dôležitá viacjazyčná podpora je potrebné ju správne definovať rozlíšením kódu jazyka úlohy. Keď sa aktuálne nastavený jazyk rozpoznávania zhoduje s jazykom v úlohe a rozpoznaný text spĺňa podmienku regulárneho výrazu, tak sa zavolá asociovaná callback funkcia. Tá v parametri obsahuje rozpoznaný text v podobe textového reťazca, s ktorým sa dá ďalej pracovať. Príklad konfigurácie na pridanie novej úlohy má nasledujúci tvar:
+
+\begin{lstlisting}
+'someTask': {
+  'regex': /^do .+/gi,
+  'lang': 'en-US',
+  'call': function(utterance){
+    // do something with utterance
+  }
+}
+\end{lstlisting}
+
+
+Takýchto konfigurácií je možné pridať ľubovoľný počet. Takto navrhnutú konfiguráciu je možné zavolať globálne v rámci aplikácie alebo dynamicky vďaka podpore regulárneho výrazu a frameworku AngularJS pre dynamicky vytvárané elementy. V prípade globálneho volania stačí použiť samotnú konfiguráciu:
+
+\begin{lstlisting}
+$speechRecognition.listenUtterance(
+  $scope.recognition['en-US']['someTask']
+);
+\end{lstlisting}
+
+Pri dynamicky vytváraných elementoch je okrem samotnej konfigurácie s regulárnym výrazom potrebné pridať aj vstupný prvok elementu voči ktorému sa bude rozpoznávanie vykonávať. Takto sa vzájomne rozlíšia jednotlivé dynamické elementy a asociovaná úloha sa vykoná len pre jeden prvok.
+
+\begin{lstlisting}
+$scope.todos = ['buy milk', 'write essay'];
+
+<li ng-repeat="todo in todos">
+  <div speechrecognition="{'tasks': recognition['en-US']['someTask'], 'input': todo}">{{todo}}</div>
+</li>
+\end{lstlisting}
+
+Napríklad ak sa v aplikácii pracuje so zoznamom úloh, tak globálne je možné obsluhovať pridanie novej úlohy a dynamicky vytvárané elementy môžu mať vlastnú obsluhu, ktorá počúva na ich meno. 
+
+Niekedy je potrebné v aplikácii na istý čas ignorovať ovládanie pomocou reči. Kvôli takýmto prípadom sa pridala možnosť jeho nastavenia v podobe metódy payAttention. Diagram navrhnutého algoritmu ovládania webovej aplikácie pomoc reči sa nachádza na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{diagram/speech.png}
+  \caption[Algoritmus ovládania aplikácie pomocou reči]{
+    Algoritmus ovládania aplikácie pomocou reči}
+  \label{fig: diaspeech}
+\end{figure}
+
+Použitie regulárneho výrazu pri konfigurácii úlohy má samozrejme aj nevýhodu. Najväčšou je potrebnosť presného určenia výrazu, nakoľko v opačnom prípade sa môžu detekovať aj nesprávne príkazy. Nevyhnutnosťou je aj stále pripojenie na internet kvôli vzdialenému rozpoznaniu reči, pričom samotné rozpoznanie nemusí byť vždy správne.
+
+% subsubsection re_ (end)
+
+\subsubsection{Pohyb} % (fold)
+\label{ssub:pohyb}
+
+Ovládanie webovej aplikácie pohybom prebieha vďaka webovej kamere. Cieľom riešenia je rozpoznať základné smery pohybov používateľa a umožniť na ne namapovať funkcionalitu aplikácie, ktorá sa vykoná po ich správnom rozpoznaní. 
+
+Video sa sníma kontinuálne a zachytený video stream z kamery je s frekvenciou 60 fps. Každý jeden snímok je následne vykreslený do elementu canvas, v ktorom je možné s ním pracovať. Ten je tvorený množinou pixelov s rgba hodnotami.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth]{img/motion/video.png}
+  \caption[Vizualizácia videa zachyteného web kamerou]{
+    Vizualizácia videa zachyteného web kamerou}
+  \label{fig: motion-video}
+\end{figure}
+
+Získaný obrázok sa následne upraví pomocou hsv filtra aplikovaného na všetky pixely aby sa detekovali oblasti s kožou používateľa, pričom hsv filter je možné nakonfigurovať na vlastné hodnoty. Vďaka týmto oblastiam je rozpoznaný používateľ a je možné spracovávať jednotlivé smery pohybov. Upravený snímok je tvorený dvomi farbami: tmavou znamenajúcou kožu a bielou pre ostatné oblasti. Rozpoznanie prebieha nasledovne:
+
+\begin{lstlisting}
+if ( (
+    (hsv[0] > hsvFilter.huemin && hsv[0] < hsvFilter.huemax) || 
+    (hsv[0] > hsvFilter.losemin && hsv[0] < losemax)
+  ) && 
+  (hsv[1] > hsvFilter.satmin && hsv[1] < hsvFilter.satmax) &&
+  (hsv[2] > hsvFilter.valmin && hsv[2] < hsvFilter.valmax)
+) {
+  skinFilter[pix] = r;
+  skinFilter[pix+1] = g;
+  skinFilter[pix+2] = b;
+  skinFilter[pix+3] = a;
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth]{img/motion/skin.png}
+  \caption[Vizualizácia videa po aplikovaní filtra detekcie kože]{
+    Vizualizácia videa po aplikovaní filtra detekcie kože}
+  \label{fig: motion-skin}
+\end{figure}
+
+Ako je možné vidieť, detekcia kože nie je úplne správna a na základe hsv sa detekuju aj iné oblasti. Následne prebieha ďalšie upravovanie pri ktorom sa detekuju len samotné hrany. Ich detekcia prebieha na základe rozdielov farebnosti pixelov posledných dvoch snímkov \cite{MotionIllumination} s aplikovaným filtrom kože. Zistí sa celkový rozdiel v rgba hodnote každého pixelu a pokiaľ nastala výrazná zmena, tak sa detekuje ako hrana a zafarbí sa:
+
+\begin{lstlisting}
+var rgbaDelta = Math.abs(draw.data[pix] - lastDraw.data[pix]) +
+  Math.abs(draw.data[pix+1] - lastDraw.data[pix+1]) +
+  Math.abs(draw.data[pix+2] - lastDraw.data[pix+2]);
+
+if (rgbaDelta > treshold.rgb){
+  edge.data[pix] = 0;
+  edge.data[pix+1] = 0;
+  edge.data[pix+2] = 0;
+  edge.data[pix+3] = 255;
+}
+\end{lstlisting}
+
+Opäť vznikne snímok tvorený dvomi farbami, ale tentokrát tmavá farba sa nachádza len na hranách a biela na ostatných častiach obrázku. Obrázok definuje miesta, na ktorých sa medzi snímkami vykonával pohyb. Na základe sekvencie takýchto obrázkov hrán vieme presnejšie určiť smer pohybu používateľa.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth]{img/motion/edges.png}
+  \caption[Vizualizácia videa po aplikovaní filtra detekcie hrán]{
+    Vizualizácia videa po aplikovaní filtra detekcie hrán}
+  \label{fig: motion-edges}
+\end{figure}
+
+Keď je obrázok v už takomto stave tak je možné začať rozpoznávať predvádzané gesto. Spočíta sa celkový počet zmenených bodov a pomer zmenených bodov v osiach x a y obrázka. Postupným hromadením snímkov a spočítavaním všetkých zmenených bodov sa určí celkový smer pohybu. Celkovo sa rozpoznávajú štyri základné gestá, kde po úspešnom rozpoznaní sa vykonajú priradené funkcie:
+
+\begin{itemize}
+  \item onSwipeLeft - pohyb zprava vľavo
+  \item onSwipeRight - pohyb zľava vpravo
+  \item onSwipeUp - pohyb zdola hore
+  \item onSwipeDown - pohyb zhora dole 
+\end{itemize}
+
+Príklad nastavenia funkcie na odchytenie gesta má nasledujúci tvar, kde sa asociuje callback funkcia, ktorá sa má následne v programe vykonať.
+
+\begin{lstlisting}
+$motion.onSwipeRight(function(){
+  // DO SOMETHING
+});
+\end{lstlisting}
+
+Citlivosť aplikovania filtrov a rozpoznávania gesta je samozrejme možné konfigurovať nastavením tresholdu a úpravou hsv filtra. Problémy nastávajú najmä pri extrémnych vonkajších podmienkach, ktorými sú nízke alebo príliš vysoké osvetlenie. Tie sa však dajú eliminovať jeho zmenou.
+
+Vytvorený modul podporuje aj ďalšie udalosti na ktoré je možné viazať funkcie, akými sú začiatok a koniec snímania, pretože na prístup k web kamere je potrebné explicitné povolenie od používateľa. Diagram navrhnutého algoritmu ovládania webovej aplikácie pomoc pohybu sa nachádza na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{diagram/motion.png}
+  \caption[Algoritmus ovládania aplikácie pomocou pohybu]{
+    Algoritmus ovládania aplikácie pomocou pohybu}
+  \label{fig: diamotion}
+\end{figure}
+
+\paragraph{Vizualizácia} % (fold)
+\label{par:zobrazenie_n_h_adu}
+
+V aplikácii je možné pridať aj zobrazenie aktuálneho náhľadu z webovej kamery a to použitím vytvorenej direktívy pridaním atribútu ,,adaptive-motion'' ku canvas elementu. Atribút môže nadobúdať nasledujúce hodnoty:
+
+\begin{itemize}
+  \item video - zobrazí aktuálny náhľad z web kamery zariadenia, ktorého detail je zobrazený na obrázku \ref{fig: motion-video}
+  \item skin - zobrazí video stream po aplikovaní filtra rozpoznania kože, ktorého detail je zobrazený na obrázku \ref{fig: motion-skin}
+  \item edge - zobrazí video stream po aplikovaní filtra rozpoznania hrán, ktorého detail je zobrazený na obrázku \ref{fig: motion-edges}
+\end{itemize}
+
+
+% paragraph zobrazenie_n_h_adu (end)
+
+% subsubsection pohyb (end)
+
+\subsubsection{Gyroskop} % (fold)
+\label{ssub:gyroskop}
+
+Jednou z možností ovládania webovej aplikácie je použitie gyroskopu. Na tento prípad som vytvoril modul pomocou ktorého je možné vo webovej aplikácií skrolovať len pomocou natáčania zariadenia do strán bez ďalšej potrebnej interakcie používateľa. Cieľom je zároveň umožniť ovplyvniť samotnú rýchlosť skrolovania na základe veľkosti natočenia oproti počiatočnej pozícii zariadenia.
+
+Modul sa inacializuje pridaním atribútu ,,adaptivescroll'' k elementu, v ktorom má prebiehať skrolovanie. Tým môže byť napríklad element ,,body'', ktorý zohľadňuje skrolovanie celej webovej stránky, alebo aj nejaký iný vnorený element. V takom prípade však skrolovanie prebieha len v rámci daného elementu.
+
+\begin{lstlisting}
+<body adaptivescroll> </body>
+\end{lstlisting}
+
+Následne stačí zavalať metódu so začatím sledovania polohy zariadenia, v ktorej sa môže upraviť ignorovaná hranica natočenia v uhloch a skrolovanie prebieha automaticky. V prípade potreby je toto sledovanie možné aj ukončiť.
+
+Po začatí sledovania aktuálneho natočenia zariadenia sa uloží jeho počiatočná hodnota, ktorá sa používa ako relatívna hranica medzi stranami na ktoré prebieha skrolovanie. Postupným natáčaním zariadenia v smere hodinových ručičiek okolo osi beta od počiatočnej hodnoty k používateľovi sa vykonáva skrolovanie elementu smerom dolu, natáčaním na opačnú stranu od počiatočnej hodnoty prebieha skrolovanie hore.
+
+Do úvahy pri zohľadňovaní rýchlosti skrolovania sa berie aj absolútna hodnota natočenia zariadenia od počiatočnej hodnoty zariadenia. Čím je táto hodnota väčšia, tým rýchlejšie prebieha skrolovanie. Výpočet rozdielu natočenie zohľadňuje smer rotácie a je určený na základe počiatočnej rotácie, aktuálneho natočenia a celkovej veľkosti rotácie pre danú os:
+
+\begin{lstlisting}
+var getDiff = function(startOrientation, actualOrientation, interval){
+  var d1 = startOrientation - actualOrientation;
+  var d2 = startOrientation - actualOrientation - interval;
+  return (Math.abs(d1) < Math.abs(d2)) ? d1 : d2;
+};
+\end{lstlisting}
+
+Samotný proces skrolovania prebieha vďaka číselnej zmene offsetu elementu. Plynulosť skrolovania je zaručená použitím animácii pomocou requestAnimationFrame. Tá prebieha s frekvenciou 60 fps a je časovaná priamo prehliadačom. Tej však chýba podpora v straších verziách, v takom prípade musí byť použítý manuálny časovač aplikácie.
+
+Okrem skrolovania modul obsahuje aj ďalšie metódy onalpha, onbeta a ongamma, ktorých návratová funkcia sa zavolá vždy po zmene rotácie zariadenia a je ich možné použiť na iné potreby v aplikácii. Funkcia obsahuje parameter absolútnu zmenu pozície v uhloch od počiatočnej k aktuálnej, ktorá sa používa aj pri skrolovaní v aplikácii. Diagram navrhnutého algoritmu ovládania webovej aplikácie pomoc gyroskopu sa nachádza na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{diagram/scroll.png}
+  \caption[Algoritmus ovládania aplikácie pomocou gyroskopu]{
+    Algoritmus ovládania aplikácie pomocou gyroskopu}
+  \label{fig: diascroll}
+\end{figure}
+
+Po vytvorení modulu a testovaní na zariadeniach sa zistili problémy v skutočnej implementácii udalostí natáčania zariadenia v rôznych prehliadačoch. W3C špecifikácia orientácie zariadenia uvádza nasledovné:
+
+\begin{itemize}
+  \item os X je rovnobežná na rovinu zeme, kladné hodnoty má v smere na východ, záporné na západ
+  \item os Y je rovnobežná na rovinu zeme, kladné hodnoty má v smere na sever, záporné na juh
+  \item os Z je kolmá na rovinu zeme, kladné hodnoty má v smere od zeme, záporné smerom k zemi
+\end{itemize}
+
+Rotácia by mala byť popísaná pravidlom pravej ruky, teda kladné hodnoty rotácie sú v smere hodinových ručičiek okolo osí.
+
+Nasledujúce tabuľky ukazujú, kde sa nachádzajú nulové body pre jednotlivé osi, aké hodnoty nadobúda rozsah rotácie a či je dodržané pravidlo pravej ruky.
+
+Pravidlo pravej ruky (PPR) hovorí: 
+
+\begin{fancybox}
+\textit{,,Kladné hodnoty rotácie sa zvyšujú pri rotovaní okolo osi v smere hodinových ručičiek pri ukazovaní smerom na narastajúcu kladnú hodnotu smerovej osi.'' W3C \cite{deviceorientation}}
+\end{fancybox}
+
+
+Táto definícia je však protichodná s hodnotami kompasu. Pri rotácii okolo osi Z v smere rotácie kompasu sa hodnoty rotácie znižujú a nie narastajú. To je však spôsobené pohľadom do záporných hodnôt osi Z.
+
+
+\paragraph{Alpha} % (fold)
+\label{par:alpha}
+
+Rotácia okolo osi Z nadobúda hodnoty rotácie alpha. V špecifikácii je nejasne definové aké by mali byť východiskové hodnoty, čo vo výsledku prináša rôzne implementácie rotácie v prehliadačoch. To spôsobuje zmätok nakoľko zo špecifikácie nie je jasné, na akú stranu by mal ukazovať nulový bod. Dá sa odpozorovať podľa pravidla pravej ruky, že 0 stupňov ukazuje smerom na sever, pretože implementovaných 90 stupňov ukazuje na východ.
+
+Rozsah hodnôt bol testovaný pri držaní zariadenia v horizontálnej polohe a vycentrovaní smerom k nulovému bodu, keď hodnota rotácie bola 360 stupňov. Pozorované boli nasledujúce hodnoty:
+
+\begin{table}[H]
+  \begin{tabular}{ | l | l | l | l |}
+  \hline
+              & Nulový bod  & PPR   & Rozsah \\ \hline
+  Reference   & Sever (0)   & A     & [0, 360] \\  
+  iOS Chome   & Východ (90)   & A     & [0, 360] \\  
+  iOS Safari  & Východ (90)   & A     & [0, 360] \\  
+  Android & & & \\  
+  Chrome      & Sever (0)   & A     & [0, 360] \\  
+  Stock       & Západ (270)  & A     & [0, 360] \\  
+  Firefox     & Sever (0)   & N     & [0, 360] \\
+  \hline
+  \end{tabular}
+  \caption[Alpha rotácia gyroskopu]{Alpha rotácia gyroskopu}
+\end{table}
+
+% paragraph alpha (end)
+
+
+\paragraph{Beta} % (fold)
+\label{par:beta}
+
+Rotácia okolo osi X nadobúda hodnoty rotácie beta. Špecifikácia definuje nulový bod ako horizontálnu polohu. Všetky testované prehliadače majú implementovaný smer osi rotácie správne, problémy však nastávajú pri rozsahu rotačných hodnôt.
+
+Rozsah bol testovaný pri držaní zariadenia v horizontálnej polohe, čo je nulový bod. Zariadenie bolo potom otáčané okolo osi X o 90 stupňov tak, že displej zariadenia smeroval k pozorovateľovi. Potom nasledovalo otáčanie o ďalších 90 stupňov tak, že displej bol smerom k zemi. Na koniec nasledovala rotácia zvyšných 180 stupňov smerom do počiatočnej polohy, čím sa rotácia dokončila.
+
+
+\begin{table}[H]
+  \begin{tabular}{ | l | l | l | l | l |}
+  \hline
+              & Nulový bod    & PPR   & Rozsah         & Poznámky\\ \hline
+  Reference   & Horizontálne   & A     & [0, -180|180] & \\  
+  iOS Chome   & Horizontálne   & A     & [-90, 90]     & Plný rozsah rotácie nie je podporovaný. \\  
+  iOS Safari  & Horizontálne   & A     & [-90, 90]     & Plný rozsah rotácie nie je podporovaný. \\  
+  Android & & & & \\  
+  Chrome      & Horizontálne   & A     & [-90, 90]     & Plný rozsah rotácie nie je podporovaný. \\  
+  Stock       & Horizontálne   & A     & [-90, 90]     & Plný rozsah rotácie nie je podporovaný. \\  
+  Firefox     & Horizontálne   & N     & [0, 180|-180] & Rotácie pokračuje naspäť na začiatok \\
+  \hline
+  \end{tabular}
+  \caption[Beta rotácia gyroskopu]{Beta rotácia gyroskopu}
+\end{table}
+
+V iOS zariadeniach rovako ako v Android prehliadači a Chrome pre Android hodnoty rotácie od počiatku stúpajú správne. Ale keď rotácia nadobudne svoje maximum, čo je 90 a -90 stupňov, tak jej hodnoty začnú postupne klesať. Nie je tak podporovaný celý rozsah rotácie.
+
+Vo Firefoxe pre Android je rotácia implementovaná opačným smerom a nie je dodržané špecifikované pravidlo pravej ruky. Je však podporovaný celý rozsah rotácie. Najskôr klesne k hodnote -180 stupňov, čo sa pri pokračujúcej rotácii zmení na kladnú hodnotu a potom klesá k nule.
+
+
+% paragraph beta (end)
+
+\paragraph{Gamma} % (fold)
+\label{par:gamma}
+
+Rotácia okolo osi Y nadobúda hodnoty rotácie gamma. Špecifikácia definuje nulový bod v horizontálnej polohe. Ale aj v tomto smere rotácie sú problémy s rozsahom rotácie, ale to je spôsobené najmä samotnou špecifikáciou zo strany W3C, nakoľko v nej sa nachádza rozsah len od -90 po 90 stupňov, čo je celkovo 180 a nie je tak pokryté celé otočenie.
+
+Rozsah hodnôt bol testovaný pri držaní zariadenia v horizontálnej polohe a natočením na nulový bod. Zariadenie bolo potom otáčané okolo osi Y o 90 stupňov v smere hodinových ručičiek tak, že jeho displej smeroval vpravo. Potom nasledovalo otočenie o ďalších 90 stupňov tak, že zariadenie smerovalo dolu. Na koniec sa dokočilo zostávajúcich 180 stupňov rotácie do pôvodného stavu.
+
+\begin{table}[H]
+  \begin{tabular}{ | l | l | l | l | l |}
+  \hline
+              & Nulový bod    & PPR   & Rozsah         & Poznámky\\ \hline
+  Reference   & Horizontálne   & A     & [0, 90|-90]   & Zlá definícia od W3C \\  
+  iOS Chome   & Horizontálne   & A     & [0, 180|-180] & Plný rozsah rotácie nie je podporovaný \\  
+  iOS Safari  & Horizontálne   & A     & [0, 180|-180] & Plný rozsah rotácie nie je podporovaný. \\  
+  Android & & & & \\  
+  Chrome      & Horizontálne   & A     & [0, 270|-90]  & Upravený rozsah rotácie definuje natočenie \\  
+  Stock       & Horizontálne   & A     & [0, 270|-90]  & Upravený rozsah rotácie definuje natočenie \\  
+  Firefox     & Horizontálne   & N     & [0, -90|90]   & Rozsah rotácie pokračuje naspäť na začiatok \\
+  \hline
+  \end{tabular}
+  \caption[Gamma rotácia gyroskopu]{Gamma rotácia gyroskopu}
+\end{table}
+
+Zlá definícia rotácie od W3C špecifikuje rotáciu len po hodnotu 90 stupňov z horizontálnej polohy, čo spôsobuje problémy pri väčšom natočení zariadenia.
+
+V iOS rotácia nadobúda nulový bod v horizontálnej polohe s displejom smerujúcim hore. Otočením zariadenia okolo osi Y tak, že obrazovka bude smerovať smerom dole bude aktuálne gamma natočenie nadobúdať hodnotu 180, respektíve -180 stupňov. Ak sa rotácia uskutočňuje v smere hodinových ručičiek, tak hodnoty rotácie sa postupne zvyšujú v kladných číslach. Ak rotácia ide opačným smerom proti smeru hodinových ručičiek, tak hodnoty rotácie sa zmenšujú. Pri natočení zariadenia smerom na bok lavou stranou hore je hodnota rotácia 90 stupňov, na opačnej strane pri smerovaní pravej hrany smerom hore je to -90 stupňov.
+
+Chrome pre Android a vstavaný Android prehliadač majú spravné hodnoty rotácie od -90 po +90 stupňov. Ale po natočení zariadenia o viac ako 90 stupňov v smere hodinových ručičiek hodnota rotácie naďalej stúpa až po hodnotu 270 stupňov, čo je zároveň aj hodnota -90. Toto poskytuje možnosť presne vedieť veľkosť natočenia zariadenia.
+
+Firefox má aj pri rotácii okolo osi Y podobný problém, a to je že hodnoty sú opačné a nedodržiava špecifikované pravidlo pravej ruky. Rozsah je správny, ale rotácie v smere hodinových ručičiek nadobúdajú záporné hodnoty a naopak.
+
+% paragraph gamma (end)
+
+
+\paragraph{Gyrocopter} % (fold)
+\label{par:gyrocopter}
+
+Na vyriešenie problémov pri vývoji webových aplikácii spôsobených rôznymi implementáciami rotácii v prehliadačoch som vytvoril rozšírenie Gyrocopter pre prehliadač Chrome \footnote{Dostupné na stiahnutie z Chrome Web Store \url{https://chrome.google.com/webstore/detail/gyrocopter/oooalfgemajfclliinfcdkifafmcfjop}}. Hlavným cieľom rozšírenia je umožniť zvoliť si simuláciu konkrétneho prehliadača a dynamicky meniť rotáciu zariadenia bez potreby testovania funkcionality na reálnom zariadení. Podobná funkcionalita sa už nachádza v developerských nástrojoch prehliadača Chrome, ale tam je možné len manuálne zadať hodnoty rotácie bez znalosti skutočných rozsahov a náhľadu natočenia zariadenia.
+
+Toto rozšírenie umožňuje simulovať udalosti ktoré nastanú pri rotácii zariadenia, pričom používateľ môže natáčať zariadenie vo všetkých troch osiach. Rozšírenie je implementované pre vývojárov priamo do prostredia ,,Chrome Developer Tools''.
+
+Nakoľko hodnoty rotácii sú implementované v prehliadačoch rôzne, tak používateľ má na výber zvoliť si podľa akej implementácie chce vyvolávať udalosti rotácie. Simulovanými prehliadačmi na výber sú:
+
+\begin{itemize}
+  \item W3C špecifikácia
+  \item iOS Safari (Chrome používa web view)
+  \item Android Chrome
+  \item Android prehliadač
+  \item Firefox pre Android
+\end{itemize}
+
+Samotné používateľské rozhranie rozšírenia obsahuje náhľad aktuálnej rotácie zariadenia na ktorom je možné zmeniť aktuálne simulovaný prehliadač. Pod ním sa nachádzajú uhly natočenia alpha, beta a gamma, ktoré je možné meniť. Tieto obsahujú pre jednotlivé prehliadače rozsahy a smer natočenia. Pri zmene rotácie na jednotlivých osiach sa zmena automaticky prejaví aj na náhľade zariadenia. 
+
+Toto rozhranie navrhnutého rozšírenia je znázornené na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.35\textwidth]{img/gyrocopter.png}
+  \caption[Gyrocopter - gyroskop simulátor]{
+    Gyrocopter - gyroskop simulátor}
+  \label{fig: gyrocopter}
+\end{figure}
+
+Po výbere, respektíve zmene prehliadača, ktorý sa má simulovať, sa automaticky prepočítajú rozsahy pre jednotlivé uhly otáčania. Zároveň sa upravia na nich aj aktuálneho hodnoty natočenia bez toho, aby sa musela znázornená rotácia zariadenia meniť.
+
+
+% paragraph gyrocopter (end)
+
+% subsubsection gyroskop (end)
+
+% subsection alternat_vne_sp_soby_ovl_dania (end)
+
+% \newpage
 \subsection{Komponenty} % (fold)
 \label{sub:komponenty}
+
+Pri adaptívnom dizajne sú dôležité aj webové komponenty s ktorými používateľ webovej aplikácie priamo interaguje. Tieto boli skúmané najmä z hľadiska optimalizácie na rôzne zariadenia a rýchlosti pripojenia.
 
 \subsubsection{Video} % (fold)
 \label{subsub:video}
@@ -464,14 +886,141 @@ Jediné možné riešenie je len v spolupráci s natívnou aplikáciou, aj tak s
 
 % subsection komponenty (end)
 
+\subsection{Nástroje} % (fold)
+\label{sub:n_stroje}
+
+\subsubsection{Detekcia} % (fold)
+\label{ssub:detekcia}
+
+Pre potreby rozpoznávania platformy v aplikácii bol vytvorený modul detekcie podľa jedinečného ,,user agent'' textu. Modul umožňuje detekovať iOS a Android zariadenia. Rozpoznávanie prebieha na základe regulárneho výrazu, kde pri metóde detekcie iOS zariadenia sa kontroluje výsky slov ,,iPhone'', ,,iPad'' alebo ,,iPod'', ktoré jedinečne definujú platformu. Pri Android zariadeniach je detekcia jednoduchšia, pretože stačí ak sa v identifakačnom texte nachádza slovo ,,Android''. Príklad metódy detekcie má nasledujúci tvar:
+
+\begin{lstlisting}
+var isAndroid = function(userAgent){
+  return (/(Android)/gi).test(userAgent);
+}
+\end{lstlisting}
+
+Pri konfigurácii webovej aplikácie je možné aj aktálny ,,user agent'' text nahradiť vlasnou hodnotou, takže prehliadač sa vždy môže správať ako požadované zariadenie. Problém pri detekcii môže nastať, pokiaľ by user agent už bol raz nahradený používateľom, respektíve by sa prestali používať súčasné identifikátory. Potom by sa detekovala nesprávna platforma.
+
+% subsubsection detekcia (end)
+
+% subsection n_stroje (end)
+
 % section n_stroj_na_overenie (end)
 
 \section{Overenie} % (fold)
 \label{sec:overenie}
 
+V súčasnosti je overenie jednotlivých častí projektu riešené vytvorením demo aplikácií ku každému vytvorenému modulu a pomocou získanej spätnej väzby z komunity. Aktuálne sú implementované nasledujúce súčasti systému:
+
+\begin{itemize}
+  \item \textbf{angular-adaptive/adaptive-speech}\\
+    modul na ovládanie aplikácie pomocou reči
+  \item \textbf{angular-adaptive/adaptive-scroll}\\
+    modul na ovládanie aplikácie pomocou gyroscopu
+  \item \textbf{angular-adaptive/adaptive-motion}\\
+    modul na ovládanie aplikácie pomocou pohybu
+  \item \textbf{angular-adaptive/adaptive-detection}\\
+    modul na detekovanie zariadenia
+  \item \textbf{angular-adaptive/adaptive-googlemaps}\\
+    webový komponent google máp
+
+  \item \textbf{Gyrocopter}\\
+    extension na emulovanie gyroskopu do Chrome Developer Tools
+\end{itemize}
+
+V ďalšom období sa plánuje ich zlepšovanie a integrácia do reálne nasadenej webovej aplikácie, s ktorou prichádza do vstyku každý deň množstvo ľudí. Na jej základe sa vytvoria ďalšie vyhodnotenia.
+
+\newpage
+\subsection{Modul adaptive-speech} % (fold)
+\label{sub:adaptive_speech}
+
+Ovládanie pomocou reči bolo demonštrované vytvorením modulu adaptive-speech \footnote{\url{https://github.com/angular-adaptive/adaptive-speech}} a demo aplikácie nad existujúcim systémom TodoMVC \footnote{\url{http://todomvc.com/}}, ktorý demonštruje vytvorenie todo aplikácie v rôznych javascriptových frameworkoch. 
+
+Po spustení aplikácie a potvrdení prístupových povolení od používateľa k používaniu mikrofónu nie je potrebné ďalšia interakcia okrem zadávania rečových príkazov, nakoľko prebieha kontinuálne rozpoznávanie reči.
+
+V aplikácii je umožnené pridávanie novej úlohy, jej označenie za splnenú alebo úplne odstránenie zo zoznamu. Taktiež je umožnené prechádzanie medzi jej jednotlivými časťami a prepinaním zobrazenia všetkých úlohoch, aktívnych úloh a splnených úloh. Rovnako je umožnené pomocou rečového príkazu aj vymazať všetky splnené úlohy. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/adaptivespeech.png}
+  \caption[Demo vytvoreného modulu adaptive-speech]{
+    Demo vytvoreného modulu adaptive-speech}
+  \label{fig: adaptivespeech}
+\end{figure}
+
+K samotnému modulu som získal veľké množstvo spätnej väzby a je v komunite najpopulárnejší spomedzi ostatných alternatívnych metód ovládania aplikácie.
+
+% subsection adaptive_speech (end)
+
+\newpage
+\subsection{Modul adaptive-scroll} % (fold)
+\label{sub:adaptive_scroll}
+
+Ovládanie pomocou gyroskopu bolo demonštrované vytvorením modulu adaptive-scroll \footnote{\url{https://github.com/angular-adaptive/adaptive-scroll}} a demo aplikácie. V aplikácii je možné po spustení skrolovať pomocou natáčania zariadenia do strán. Skrolovanie prebieha na základe veľkosti uhlu natočenia zariadenia oproti počiatočnej polohe, čím je rozdiel väčší, tým sa vo webovej aplikácii skroluje rýchlejšie. Na skrolovanie v aplikácii nie je potrebná ďalšia interakcia používateľa, napríklad pomocou dotyku. Na lepší vývoj webovej aplikácie a emulovanie gyroskopu bolo vytvorené aj rozšírenie pre Chrome Developer Tool pod názvom Gyrocopter \footnote{\url{https://github.com/janantala/Gyrocopter}}. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/adaptivescroll.png}
+  \caption[Demo vytvoreného modulu adaptive-scroll a rozšírenie Gyrocopter]{
+    Demo vytvoreného modulu adaptive-scroll a rozšírenie Gyrocopter}
+  \label{fig: adaptivescroll}
+\end{figure}
+
+% subsection adaptive_croll (end)
+
+\newpage
+\subsection{Modul adaptive-motion} % (fold)
+\label{sub:adaptive_motion}
+
+Ovládanie pomocou pohybu bolo demonštrované vytvorením modulu adaptive-motion \footnote{\url{https://github.com/angular-adaptive/adaptive-motion}} a demo aplikácie. V nej je umožnené sledovanie používateľa a možnosť výberu jeho vizualizácie, či už klasický obraz alebo upravený zobrazením len detekovaním jeho kože alebo detekciou hrán. V aplikácii prebieha kontinuálne rozpoznávanie používateľa a postupne sa vypisujú rozpoznané gestá, pričom posledné rozpoznané gesto sa zakaždým zvýrazní. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/adaptivemotion.png}
+  \caption[Demo vytvoreného modulu adaptive-motion]{
+    Demo vytvoreného modulu adaptive-motion}
+  \label{fig: adaptivemotion}
+\end{figure}
+
+% subsection adaptive_motion (end)
+
+\newpage
+\subsection{Modul adaptive-googlemaps} % (fold)
+\label{sub:adaptive_googlemaps}
+
+Webový komponent google máp bol demonštrovaný vytvorením modulu adaptive-googlemaps \footnote{\url{https://github.com/angular-adaptive/adaptive-googlemaps}} a demo aplikácie. V aplikácii je umožnené meniť zvýraznené body, centrovanie, priblíženie a zobrazený terén a automaticky sa prispôsobí používateľovmu zariadeniu. Pokiaľ sa pristupuje z mobilného zariadenia a pomalého pripojenie na internet, tak sa zobrazí len náhľad mapy v podobe obrázku. Až po kliknutí na mapu sa dotiahne interaktívna mapa, respektíva mapa sa otvorí v natívnej mobilnej aplikácii. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/adaptivegooglemaps.png}
+  \caption[Demo vytvoreného modulu adaptive-googlemaps]{
+    Demo vytvoreného modulu adaptive-googlemaps}
+  \label{fig: adaptivemotion}
+\end{figure}
+
+% subsection adaptive_googlemaps (end)
+
 % section overenie (end)
 
+
+\newpage
 \section{Záver} % (fold)
 \label{sec:z_ver}
+
+V práci som navrhol a vytvoril možnosti adaptácie webových aplikácií, či už pomocou alternatívnych možností ovládania rečou, pohybom alebo gyroskopom, prispôsobovaním sa webových komponentov podmienkam používateľa alebo samotných nástrojov použitých pri vývoji adaptívnej webovej aplikácie.
+
+Overením ich používania sa zistilo, že alternatívne spôsoby ovládania sú celkom dobrý doplnok v súčasnosti ku klasickej interakcii so zariadeniami. Pomocou webových komponentov sa zrýchlilo načítavanie aplikácie a ušetrilo sa množstvo prenášaných dát. Verím, že v budúcnosti sa budú takéto spôsoby ešte viac presadzovať.
+
+Vytvorené nástroje sú umiestnené na serveri github pod open source licenciou, kde komunita a ne prejavila veľký záujem. Dostal som k nim množstvo pozitívnej spätnej väzby od kvalifikovaný ľudí, pull requestov na drobné úpravy funkcionality či dokumentácie a ďalej sa tak rozvíjajú aj za pomoci ostatných ľudí, za čo by som sa im chcel ešte raz poďakovať. Vďaka tomu som mal možnosť naučiť sa množstvo nových vecí z tvorby open source aplikácií a následne nadobudné poznatky ďalej prezentovať ostatným vývojárom.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{img/github.png}
+  \caption[Umiestnenie projektu na serveri github]{
+    Umiestnenie projektu na serveri github\\
+    \url{https://github.com/angular-adaptive}}
+  \label{fig: github}
+\end{figure}
 
 % section z_ver (end)
