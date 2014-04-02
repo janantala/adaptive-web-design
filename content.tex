@@ -932,7 +932,10 @@ V súčasnosti je overenie jednotlivých častí projektu riešené vytvorením 
 V ďalšom období sa plánuje ich zlepšovanie a integrácia do reálne nasadenej webovej aplikácie, s ktorou prichádza do vstyku každý deň množstvo ľudí. Na jej základe sa vytvoria ďalšie vyhodnotenia.
 
 \newpage
-\subsection{Modul adaptive-speech} % (fold)
+\subsection{Adaptívne ovládacie metódy} % (fold)
+\label{sub:adapt_vne_ovl_dacie_met_dy}
+
+\subsubsection{Modul adaptive-speech} % (fold)
 \label{sub:adaptive_speech}
 
 Ovládanie pomocou reči bolo demonštrované vytvorením modulu adaptive-speech \footnote{\url{https://github.com/angular-adaptive/adaptive-speech}} a demo aplikácie nad existujúcim systémom TodoMVC \footnote{\url{http://todomvc.com/}}, ktorý demonštruje vytvorenie todo aplikácie v rôznych javascriptových frameworkoch. 
@@ -951,10 +954,10 @@ V aplikácii je umožnené pridávanie novej úlohy, jej označenie za splnenú 
 
 K samotnému modulu som získal veľké množstvo spätnej väzby a je v komunite najpopulárnejší spomedzi ostatných alternatívnych metód ovládania aplikácie.
 
-% subsection adaptive_speech (end)
+% subsubsection adaptive_speech (end)
 
 \newpage
-\subsection{Modul adaptive-scroll} % (fold)
+\subsubsection{Modul adaptive-scroll} % (fold)
 \label{sub:adaptive_scroll}
 
 Ovládanie pomocou gyroskopu bolo demonštrované vytvorením modulu adaptive-scroll \footnote{\url{https://github.com/angular-adaptive/adaptive-scroll}} a demo aplikácie. V aplikácii je možné po spustení skrolovať pomocou natáčania zariadenia do strán. Skrolovanie prebieha na základe veľkosti uhlu natočenia zariadenia oproti počiatočnej polohe, čím je rozdiel väčší, tým sa vo webovej aplikácii skroluje rýchlejšie. Na skrolovanie v aplikácii nie je potrebná ďalšia interakcia používateľa, napríklad pomocou dotyku. Na lepší vývoj webovej aplikácie a emulovanie gyroskopu bolo vytvorené aj rozšírenie pre Chrome Developer Tool pod názvom Gyrocopter \footnote{\url{https://github.com/janantala/Gyrocopter}}. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
@@ -967,10 +970,10 @@ Ovládanie pomocou gyroskopu bolo demonštrované vytvorením modulu adaptive-sc
   \label{fig: adaptivescroll}
 \end{figure}
 
-% subsection adaptive_croll (end)
+% subsubsection adaptive_croll (end)
 
 \newpage
-\subsection{Modul adaptive-motion} % (fold)
+\subsubsection{Modul adaptive-motion} % (fold)
 \label{sub:adaptive_motion}
 
 Ovládanie pomocou pohybu bolo demonštrované vytvorením modulu adaptive-motion \footnote{\url{https://github.com/angular-adaptive/adaptive-motion}} a demo aplikácie. V nej je umožnené sledovanie používateľa a možnosť výberu jeho vizualizácie, či už klasický obraz alebo upravený zobrazením len detekovaním jeho kože alebo detekciou hrán. V aplikácii prebieha kontinuálne rozpoznávanie používateľa a postupne sa vypisujú rozpoznané gestá, pričom posledné rozpoznané gesto sa zakaždým zvýrazní. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
@@ -983,13 +986,95 @@ Ovládanie pomocou pohybu bolo demonštrované vytvorením modulu adaptive-motio
   \label{fig: adaptivemotion}
 \end{figure}
 
-% subsection adaptive_motion (end)
+% subsubsection adaptive_motion (end)
+
+% subsection adapt_vne_ovl_dacie_met_dy (end)
+
 
 \newpage
-\subsection{Modul adaptive-googlemaps} % (fold)
+\subsection{Adaptívne webové komponenty} % (fold)
+\label{sub:webov_komponenty}
+
+Pri adaptívnych webových komponentoch sme sledovali rýchlosti načítavania stránok, počty uskutočnených dopytov na server, množstvo prenášaných dát a rýchlosť zostovenia DOM stromu. Rýchlosti sme porovnávali s použitím vytvorených modulov a bez použitia pri vývoji klasickým spôsobom. Testovanie prebiehalo v rôznych podmienkach s použitím internetových pripojení s nasledujúcimi konfiguráciami:
+
+\begin{table}[H]
+  \begin{tabular}{ | l | l | l | l |}
+    \hline
+    Pripojenie & Dátový tok & Latencia & Zahodené pakety \\ \hline
+    2G & 240 kbps & 400 ms & 0  \\  \hline
+    3G & 780 kbps & 100 ms & 0  \\ \hline
+    4G & 20 Mbps & 50 ms & 0  \\ \hline
+    Broadband & 100 Mbps & 5 ms & 0  \\
+    \hline
+  \end{tabular}
+  \caption[Konfigurácie internetových pripojení]{Konfigurácie internetových pripojení}
+\end{table}
+
+Emulácia internetového pripojania prebiahala pomocou programu ,,Network Lint Conditioner'' a ďalej sa uvádzajú priemerné namerané hodnoty z 10 experimentov.
+
+\subsubsection{Modul adaptive-youtube} % (fold)
+\label{sub:adaptive_youtube}
+
+Webový komponent youtube videa bol demonštrovaný vytvorením modulu adaptive-youtube \footnote{\url{https://github.com/angular-adaptive/adaptive-youtube}} a demo aplikácie. V aplikácii je umožnené meniť automatické načítavanie videa. Pokiaľ sa pristupuje z mobilného zariadenia a pomalého pripojenia na internet, tak sa zobrazí len náhľad videa v podobe obrázku. Až po kliknutí na video sa dotiahne samotné video a začne sa prehrávať, respektíve video sa otvorí v natívnej mobilnej aplikácii.
+
+\begin{table}[H]
+  \begin{tabular}{ |c|c|c|c| }
+    \hline
+    & Embed video & Vytvorený modul \\ \hline
+    Počet požiadaviek na server & 9 & 6 \\  \hline
+    Množstvo prenesených dát  & 1517 KB & 389 KB  \\
+    \hline
+  \end{tabular}
+  \caption[Množstvo požiadaviek a prenesených dát pre youtube video]{Množstvo požiadaviek a prenesených dát pre youtube video}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{img/load/timeline-y-e.png}
+  \caption[Časová os načítavania stránky s použitím youtube embed videa]{
+    Časová os načítavania stránky s použitím youtube embed videa}
+  \label{fig: timeline-y-e}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{img/load/timeline-y-a.png}
+  \caption[Časová os načítavania stránky s použitím youtube modulu]{
+    Časová os načítavania stránky s použitím youtube modulu}
+  \label{fig: timeline-y-a}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/load/youtube-fullload.png}
+  \caption[Porovnanie rýchlosti plného načítania stránky s youtube komponentom]{
+    Porovnanie rýchlosti plného načítania stránky s youtube komponentom}
+  \label{fig: youtube-fullload}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/load/youtube-load.png}
+  \caption[Porovnanie rýchlosti load udalosti stránky s youtube komponentom]{
+    Porovnanie rýchlosti load udalosti stránky s youtube komponentom}
+  \label{fig: youtube-load}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/load/youtube-dom.png}
+  \caption[Porovnanie rýchlosti zostavenia dom stromu s youtube komponentom]{
+    Porovnanie rýchlosti zostavenia dom stromu s youtube komponentom}
+  \label{fig: youtube-dom}
+\end{figure}
+
+% subsubsection adaptive_youtube (end)
+
+\newpage
+\subsubsection{Modul adaptive-googlemaps} % (fold)
 \label{sub:adaptive_googlemaps}
 
-Webový komponent google máp bol demonštrovaný vytvorením modulu adaptive-googlemaps \footnote{\url{https://github.com/angular-adaptive/adaptive-googlemaps}} a demo aplikácie. V aplikácii je umožnené meniť zvýraznené body, centrovanie, priblíženie a zobrazený terén a automaticky sa prispôsobí používateľovmu zariadeniu. Pokiaľ sa pristupuje z mobilného zariadenia a pomalého pripojenie na internet, tak sa zobrazí len náhľad mapy v podobe obrázku. Až po kliknutí na mapu sa dotiahne interaktívna mapa, respektíva mapa sa otvorí v natívnej mobilnej aplikácii. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
+Webový komponent google máp bol demonštrovaný vytvorením modulu adaptive-googlemaps \footnote{\url{https://github.com/angular-adaptive/adaptive-googlemaps}} a demo aplikácie. V aplikácii je umožnené meniť zvýraznené body, centrovanie, priblíženie a zobrazený terén a automaticky sa prispôsobí používateľovmu zariadeniu. Pokiaľ sa pristupuje z mobilného zariadenia a pomalého pripojenia na internet, tak sa zobrazí len náhľad mapy v podobe obrázku. Až po kliknutí na mapu sa dotiahne interaktívna mapa, respektíve mapa sa otvorí v natívnej mobilnej aplikácii. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
 
 \begin{figure}[H]
   \centering
@@ -999,10 +1084,47 @@ Webový komponent google máp bol demonštrovaný vytvorením modulu adaptive-go
   \label{fig: adaptivemotion}
 \end{figure}
 
-% subsection adaptive_googlemaps (end)
+\begin{table}[H]
+  \begin{tabular}{ |c|c|c|c| }
+    \hline
+    & Embed mapa & Vytvorený modul \\ \hline
+    Počet požiadaviek na server & 68 & 6 \\  \hline
+    Množstvo prenesených dát  & 5540 KB & 476 KB  \\
+    \hline
+  \end{tabular}
+  \caption[Množstvo požiadaviek a prenesených dát pre google mapy]{Množstvo požiadaviek a prenesených dát pre google mapy}
+\end{table}
 
-% section overenie (end)
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/load/gmaps-fullload.png}
+  \caption[Porovnanie rýchlosti plného načítania stránky s google maps komponentom]{
+    Porovnanie rýchlosti plného načítania stránky s google maps komponentom}
+  \label{fig: gmaps-fullload}
+\end{figure}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/load/gmaps-load.png}
+  \caption[Porovnanie rýchlosti load udalosti stránky s google maps komponentom]{
+    Porovnanie rýchlosti load udalosti stránky s google maps komponentom}
+  \label{fig: gmaps-load}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/load/gmaps-dom.png}
+  \caption[Porovnanie rýchlosti zostavenia dom stromu s google maps komponentom]{
+    Porovnanie rýchlosti zostavenia dom stromu s google maps komponentom}
+  \label{fig: gmaps-dom}
+\end{figure}
+
+% subsubsection adaptive_googlemaps (end)
+
+% subsection webov_komponenty (end)
+
+
+% subsection  (end)
 
 \newpage
 \section{Záver} % (fold)
