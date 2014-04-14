@@ -601,7 +601,269 @@ Okrem skrolovania modul obsahuje aj ďalšie metódy onalpha, onbeta a ongamma, 
   \label{fig: diascroll}
 \end{figure}
 
-Po vytvorení modulu a testovaní na zariadeniach sa zistili problémy v skutočnej implementácii udalostí natáčania zariadenia v rôznych prehliadačoch. W3C špecifikácia orientácie zariadenia uvádza nasledovné:
+% subsubsection gyroskop (end)
+
+% subsection alternat_vne_sp_soby_ovl_dania (end)
+
+% \newpage
+\subsection{Komponenty} % (fold)
+\label{sub:komponenty}
+
+Pri adaptívnom dizajne sú dôležité aj webové komponenty s ktorými používateľ webovej aplikácie priamo interaguje. Tieto boli skúmané najmä z hľadiska optimalizácie na rôzne zariadenia a rýchlosti pripojenia.
+
+\subsubsection{Video} % (fold)
+\label{subsub:video}
+
+Populárnym doplnkom súčasných webový stránok je priložené video, ktoré sa často nachádza na serveroch YouTube alebo Vimeo.
+
+Problémom je, že pri vložení videa pomocou iframe alebo embed api sa uskotočňuje množstvo dopytov na servery a prenášajú sa zbytočné dáta aj keď používateľa video nezaujíma a vôbec si ho neprehrá. Okrem zbytočne prenášaných dát sa aj znižuje výkon, nakoľko určitý čas trvá spracovanie požiadaviek.
+
+Nasledujúce dáta sa prenesú pri zobrazení stránky, na ktorú bolo vložené video zo servera YouTube pomocou dostupného iframe API:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{img/youtube.png}
+	\caption[Prenášané dáta pri požiadavke na video zo servera YouTube]{
+		Prenášané dáta pri požiadavke na video zo servera YouTube}
+	\label{fig: youtube}
+\end{figure}
+
+Celkovo sa vykoná 6 požiadaviek a prenesie sa 350 kB dát bez toho, aby používateľ spustil video. Podobná situácia sa opakuje aj pri požiadavke na video zo servera Vimeo pomocou iframe API.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{img/vimeo.png}
+	\caption[Prenášané dáta pri požiadavke na video zo servera Vimeo]{
+		Prenášané dáta pri požiadavke na video zo servera Vimeo}
+	\label{fig: vimeo}
+\end{figure}
+
+V tomto prípade sa dokonca vykoná 15 požiadaviek a prenesie sa 120 kB dát. V prípade použitia javascriptového API s HTML 5 prehrávačom videa sa síce nestiahnú flashové komponenty, ale nahradia ich rovnakoveľké javascriptové súbory.
+
+Lepšie riešenie je použiť podmienené načítavanie. Najskôr sa načíta len obrázok videa a pridajú sa jednoduché štylistické prvky aby vytvorený element pripomínal video súbor a až po kliknutí sa urobia dopyty na vzdialený server s automatickým prehratím videa. Výhodou takéhoto riešenia je zmenšenie veľkosti dopytov a s tým spojené šetrenie dát používateľov. 
+
+Čo sa týka získania obrázkového náhľadu videa, tak YouTube túto možnosť priamo poskytuje a záleží len od identifikátora videa. K obrázku je tak možné pristúpiť priamo. Navyše po vykonaní požiadaviek na server po kliknutí na obrázok a následnom spustení videa pomocou api sa už daný onrázok nachádza v pamäti, tak sa nemusia robiť ďalšie požiadavky. 
+
+Samotný proces automatického spustenia YouTube videa nie je úplne jednoduchý, nakoľko nastavenie hodnoty ,,autoplay'' pri vložení elementu iframe s videom na stránku nefunguje na mobilnom prehliadači Safari, kde je táto možnosť zakázaná. V takomto prípade by sa po kliknutí na obrázok videa načítal len element s videom a aby sa samotné video začalo prehrávať očakáva sa ďalšie kliknutie. Takéto správanie je neželené a je proti používateľskému zážitku. 
+
+Preto bolo potrebné vymyslieť lepšie riešenie. To spočíva v načítaní scriptu s javascriptovým youtube API a následným vytvorením iframe elementu s videom až pomocou neho. Takto máme prístup k programátorskému ovládaniu prehravača videa a môžme ho spustiť keď potrebujeme, teda po kliknutí na obrázok s náhľadom videa. Takéto riešenie už fungujé aj na iOS s mobilným prehliadačom Safari.
+
+Stále však máme problém pri staršej verzii iOS 5 a menej, tam nefunguje ani programátorske spustenie videa. V tejto verzii iOS sa však ešte distribuovala predinštalovaná aplikácia na prehrávanie Youtube videí, ktorá bola v neskorších verziách odstránená a je ju možné stiahnúť z iTunes. Výhodou je, že video môžme otvoriť priamo v nej pomocou youtube url schémy. Musíme však používaný prehliadač správne detekovať a následne sa rozhodnúť, aké prehrávanie zvolíme.
+
+Na detekovanie funkcionality otvorenia youtube videa v aplikácii pomocou systému iOS a jej zisťovaním len z pola ,,user agent'' nie je správne, nakoľko by bolo potrebné získať úplne všetky verzie systému, ktorých je mnoho, a následne porovnať s verziou zariadenia.
+
+Lepším riešením je vytvorenie testu funkčnosti prehrávania videa, ktoré je riešené pomocou nástroja Modernizr\footnote{Modernizr \url{http://modernizr.com/} je JavaScriptová knižnica, ktorá detekuje dostupnosť natívnej imlementácie nových technológií v prehliadači.} umožňujúcim detekciu základných HTML5 a CSS3 vlastností prehliadača a vytváranie vlastných testov. Následne sa na základe výsledku testu rozhodnemu akú akciu vykonať. Problémom je, že testy sa vykonávajú po načítaní stránky a nechceme používateľovi automaticky otvoriť natívnu aplikáciu alebo ho presmerovať na stránky youtube. Preto je zvolená iná varianta a detekuje sa podbora vlastnosti, ktorá bola pridaná až v novšej verzii iOS 6. Konkrétne sa jedná o podboru jednotiek ,,vh a vw'' (viewport height a viewport width) slúžiacich na nastavenie veľkosti DOM elementu. Detekcia či je zariadenie iOS vychádza z pola user agent, ale už sa nezisťuje jej verzia.
+
+Výsledok je taký, že po kliknutí na obrázok s náhľadom videa a vyhodnotení testu prehrávania sa začne prehrávať v prehliadači alebo v natívnej aplikácii.
+
+V prípade Vimea je situácia trochu komplikovanejšia pretože k náhľadovému obrázku sa priamo nevieme dostať a je potrebné urobiť jednu požiadavku na API, ktorá vráti informácie o videu. Vykonanie požiadavky síca nejaký čas trvá, ale aj tak je výsledok z pohľadu prenášaný údajov lepší ako robiť požiadavku priamo na samotné video.
+
+S prehrávaním videa zo služby vimeo je situácia podobná, neexistuje však natívna aplikácia a po klinutí na náhľad videa je používateľ v starších verziách iOS presmerovaný na stránky vimea, v novších verziách iOS a v Androide sa mu automaticky prehrá.
+
+% subsubsection video (end)
+
+
+\subsubsection{Mapy} % (fold)
+\label{subsub:mapy}
+
+Mapy podobne ako videá vytvárajú nechcené dátové prenosy, dokonca ich ešte aj prevyšujú pretože sa neprenášajú len údaje o aktuálne zobrazenej časti mapy ale aj jej okolie. Okrem nich navyše na webe neposkytujú taký plnohodnotný zážitok z prezerania ako v natívnej aplikácii. Nevýhodou je aj nemožnosť posúvania webovej stránky pokiaľ je element s mapou väčší ako je rozlíšenie displeja mobilného zariadenia, lebo eventy sú zachytávané mapou a posúva sa tá.
+
+Používateľ nemusí chcieť okamžite interagovať s mapou a v takomto prípade ho zbytočne zaťažuje. Výhodnejšie je tak zobraziť len náhľad mapy, ktorý sa načíta rýchlejšie pretože šetrí prenášané dáta, a pokiaľ sa používateľ chce dozvedieť viac, tak len jednoducho na mapu klikne. V takomto prípade sa mu automaticky načíta plne interaktívna mapa. Na zobrazenie náhľadu mapy existuje API v službe google maps\footnote{\url{https://developers.google.com/maps/documentation/staticmaps/}}, takže je možné využiť priamo to. Nevýhodou je, že počet požiadaviek za deň, ktoré sú zadarmo, je obmedzený, po získaní API kľúča je možné ich spraviť 25000, ďalšie sú spoplatňované.
+
+Rozšírením na mobilných zariadeniach iOS je možnosť otvorenia mapy priamo v natívnej aplikácii, ktorá prináša ešte väčší používateľský zážitok ako zobrazenie na webe. To je uskutočňované pomocou url schémy. V starších verziách iOS sa nachádzala natívna aplikácia na Google API a bola vyvolaná otvorením nasledujúceho odkazu, kde bolo možné zadávať parametre zobrazenia.
+
+\begin{verbatim}
+http://maps.google.com/
+\end{verbatim}
+
+S príchodom iOS 6 bola aplikácia nahradená vlastnom Apple aplikáciou, na ktorej spustenie sa zmenila aj url schéma a pôvodná otvorí mapu len v prehliadači. Výhodou je, že na starších, respektíve nepodporovaných zariadeniach nastáva presmerovanie na stránky Google a tak na rovnakom odkaze funguje spúšťanie aj pôvodnej aplikácie. Nová url schéma má nasledujúci tvar:
+
+\begin{verbatim}
+http://maps.apple.com/
+\end{verbatim}
+
+% subsubsection mapy (end)
+
+
+\subsubsection{Lightboxy} % (fold)
+\label{subsub:lightboxy}
+
+Lightbox je technika umožňujúca zobrazovať webový obsah v modálnych oknách nachádzajúcich sa nad úrovňou pôvodnej stránky.
+
+Hlavným problémom použitia ,,lightboxov'' na mobilných zariadeniach je nesprávne zobrazovanie stránok pokiaľ nové okno je väčšie ako displej. V takomto prípade by bolo vhodnejšie používateľa presmerovať priamo na novú stránku.
+
+% subsubsection lightboxy (end)
+
+\subsubsection{Otvorenie v aplikácii / Stiahnutie aplikácie} % (fold)
+\label{ssub:otvorenie_v_aplik_cii}
+
+V súčasnosti sme opklopovaný množstvom informačných zdrojov, ktoré sa zväčša nachádzajú na internete dostupné na konkrétnej webovej adrese. Na tieto zdroje existuje množstvo odkazov z rôznych webových stránok, sociálnych sietí či mobilných aplikácii, ktoré zobrazia ich obsah v prehliadači.
+
+\begin{fancybox}
+\textit{,,Links don’t open apps.'' Jason Grigsby} \cite{links}
+\end{fancybox}
+
+Webové odkazy neotvárajú natívne aplikácie, čo je technicky pravda, no realita je trochu odlišná. Prepojenie webovej časti aplikácie s natívnou umožňuje otvárať komplexnejšie úlohy, na ktoré je vo webe nedostatočny výkon, priamo v natívnom kóde. To umožní plynulejší chod aplikácie a lepší používateľský zážitok.
+
+Prepájanie aplikácii sa uskutočňuje pomocou ,,custom url schémy'' \cite{urlscheme}, ktorá je špecifická pre jednotlivé operačné systémy zariadení. Nevýhodou vlastných odkazov je, že pokiaľ používateľ nemá nainštalovanú aplikáciu, tak po kliknutí sa objaví celkom nepekná chybová hláška.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.35\textwidth]{img/customerror.png}
+	\caption[Chybová hláška po otvorení custom URL schémy, pokiaľ aplikácia neexistuje]{
+		Chybová hláška po otvorení custom URL schémy, pokiaľ aplikácia neexistuje \cite{customscheme}.\\
+		Prevzaté z http://www.lukew.com/ff/entry.asp?1654}
+	\label{fig: customerror}
+\end{figure}
+
+Lepším riešením je detekovanie, či si používateľ stiahol natívnu aplikáciu a odkaz na otvorenie v nej vytvoriť až potom, čo je overenie úspešné. Pokiaľ by nebolo, tak by sa mohlo zobraziť tlačítko na stiahnutie natívnej aplikácie, ktoré opäť musí byť prispôsobené platforme na ktorej na stránku prispôsobujeme, pokiaľ nechceme používateľa zahltitť všetkými platformami ktoré podporujeme.
+
+Samotný proces detekcie či má používateľ nainštalovanú našu aplikáciu vôbec nie je triviálny, pretože na webe neexistuje žiadne dostupné API, ktoré by zahrňovalo všetky platformy. Apple síce vydal možnosť otvorenia aplikácie pomocou ,,Smart Banners'', ale až v iOS 6 a tak táto možnosť nie je úplne použiteľná.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{img/smartappbanner.png}
+	\caption[Otvorenie natívnej aplikácie v iOS 6]{
+		Otvorenie natívnej aplikácie v iOS 6 \cite{smartappbanner}.\\
+		Prevzaté z http://developer.apple.com/}
+	\label{fig: smartappbanner}
+\end{figure}
+
+Navyše ,,smart banner'' je priamo definovaný v html meta tagu aplikácie. Na stránke existuje len jeden ktorý volá url schému aplikácie a aj ten má prednastevený vzhľad v podobne okna v hornej časti obrazovky. Keby chceme vlastnú natívnu aplikáciu zavolať z viacerých častí webovej, prípadné volať viacero natívnych aplikácií, tak toto riešenie je nepostačujúce. Nemôže byť upravané vlastným potrebám.
+
+Jediné možné riešenie je len v spolupráci s natívnou aplikáciou, aj tak sa však musí vyvolať otvorenie stránky v prehliadači, kde sa dá už do cookies alebo lokálneho úložiska programátorksy zapísať existencia aplikácie. Vytvorenie samotného ,,webView'' komponentu s webovou stránkou vrámci aplikácie a následné zatvorenie nestačí. Prehliadač má oddelené úložiská stránok pre rôzne typy prístupov ako sú s internetový prehliadač, aplikácia a v iOS aj pre otvorenie internetovaj stránky z plochy. Možnosť ako tento proces zamaskovať je skrytá v procese registrácie, keď po otvorení aplikácie a zaregistrovaní pošleme používateľovi e-mail s potvrdzujúcim odkazom, ktorý otvorí webovú stránku v prehliadači.
+
+
+% subsubsection otvorenie_v_aplik_cii (end)
+
+% subsection komponenty (end)
+\newpage
+\subsection{Nástroje} % (fold)
+\label{sub:n_stroje}
+
+\subsubsection{Detekcia} % (fold)
+\label{ssub:detekcia}
+
+Pre potreby rozpoznávania platformy v aplikácii bol vytvorený modul detekcie podľa jedinečného ,,user agent'' textu. Modul umožňuje detekovať iOS a Android zariadenia. Rozpoznávanie prebieha na základe regulárneho výrazu, kde pri metóde detekcie iOS zariadenia sa kontroluje výsky slov ,,iPhone'', ,,iPad'' alebo ,,iPod'', ktoré jedinečne definujú platformu. Pri Android zariadeniach je detekcia jednoduchšia, pretože stačí ak sa v identifakačnom texte nachádza slovo ,,Android''. Príklad metódy detekcie má nasledujúci tvar:
+
+\begin{lstlisting}
+var isAndroid = function(userAgent){
+  return (/(Android)/gi).test(userAgent);
+}
+\end{lstlisting}
+
+Pri konfigurácii webovej aplikácie je možné aj aktálny ,,user agent'' text nahradiť vlasnou hodnotou, takže prehliadač sa vždy môže správať ako požadované zariadenie. Problém pri detekcii môže nastať, pokiaľ by user agent už bol raz nahradený používateľom, respektíve by sa prestali používať súčasné identifikátory. Potom by sa detekovala nesprávna platforma.
+
+% subsubsection detekcia (end)
+
+% subsection n_stroje (end)
+
+% section n_stroj_na_overenie (end)
+\newpage
+\section{Overenie} % (fold)
+\label{sec:overenie}
+
+Detekovali sme niekoľko vstupných metód, webových komponentov a overovali ktoré z nich poskytujú lepší používateľský zážitok pre návštevníkov webových stránok ako aj pre samotných webových vývojárov. Na obe adaptívne vstupnú metódy aj webové komponenty boli vytvorené série experimentov. Na preukázanie užitočnosti navrhnutého konceptu sme navrhli a implementovali niekoľko opakovane použiteľných modulov a komponentov. Overenie jednotlivých častí projektu je riešené vytvorením prototypových aplikácií ku každému vytvorenému modulu a pomocou získanej spätnej väzby z komunity. Všetky súčasti boli vytvorené pod open source licenciou a sú dostupné na GitHube. Implementované sú nasledujúce súčasti systému:
+
+\begin{itemize}
+  \item \textbf{angular-adaptive/adaptive-speech}\\
+    modul na ovládanie aplikácie pomocou reči
+  \item \textbf{angular-adaptive/adaptive-scroll}\\
+    modul na ovládanie aplikácie pomocou gyroscopu
+  \item \textbf{angular-adaptive/adaptive-motion}\\
+    modul na ovládanie aplikácie pomocou pohybu
+  \item \textbf{angular-adaptive/adaptive-detection}\\
+    modul na detekovanie zariadenia
+  \item \textbf{angular-adaptive/adaptive-googlemaps}\\
+    webový komponent google máp
+  \item \textbf{angular-adaptive/adaptive-youtube}\\
+    webový komponent youtube videí
+
+  \item \textbf{Gyrocopter}\\
+    rozšírenie do Chrome Developer Tools na emulovanie gyroskopu
+  \item \textbf{speech-synthesis}\\
+    polyfill rečovej syntézy
+\end{itemize}
+
+Pre vytvorené webové komponenty sme sledovali množstvo ušetrených dát, merali zrýchlenia načítavania webových stránok či počty vykonaných dopytov na server pre rôzne druhy internetových pripojení. Pre adaptívne vstupné metódy sme zisťovali najmä záujem o jednotlivé druhy alternatívnych ovládaní webových stránok. Z komunity sme získali množstvo spätnej väzby, ktorá nám taktiež pomohla overiť navrhnutý koncept a ďalej prispôsobiť riešenia. Podľa analytických nástrojov sa experimentov zúčastnili desaťtisíce používateľov a vývojárov.
+
+\newpage
+\subsection{Adaptívne vstupné metódy} % (fold)
+\label{sub:adapt_vne_ovl_dacie_met_dy}
+
+Adaptívne vstupné metódy poskytujú alternatívne spôsoby ovládania webových aplikácií. Experimentovali sme ovládaním webových aplikácií pomocou rečových povelov, pohybu detekovaného pomocou gyroskopu a video kamery.
+
+\subsubsection{Modul adaptive-speech} % (fold)
+\label{sub:adaptive_speech}
+
+Ovládanie pomocou reči bolo demonštrované vytvorením modulu adaptive-speech \footnote{\url{https://github.com/angular-adaptive/adaptive-speech}} a prototypovej aplikácie nad existujúcim systémom TodoMVC \footnote{\url{http://todomvc.com/}}, ktorý demonštruje vytvorenie todo aplikácie v rôznych javascriptových frameworkoch. 
+
+Vytvorený experiment založený na našom module poskytoval ovládanie aplikácie todo listu. Po spustení aplikácie a potvrdení prístupových povolení od používateľa k používaniu mikrofónu nie je potrebné ďalšia interakcia okrem zadávania rečových príkazov, nakoľko prebieha kontinuálne rozpoznávanie reči. Celkovo sa v ňom rozpoznávalo 7 presných rečových povelov a 9 rečových povelov založených na použití regulárnych výrazov. V aplikácii je tak umožnené pridávanie novej úlohy, jej označenie za splnenú alebo úplne odstránenie zo zoznamu. Taktiež je umožnené prechádzanie medzi jej jednotlivými časťami a prepinaním zobrazenia všetkých úlohoch, aktívnych úloh a splnených úloh. Rovnako je umožnené pomocou rečového príkazu aj vymazať všetky splnené úlohy. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{img/adaptivespeech.png}
+  \caption[Prototypová aplikácia vytvoreného modulu adaptive-speech]{
+    Prototypová aplikácia vytvoreného modulu adaptive-speech}
+  \label{fig: adaptivespeech}
+\end{figure}
+
+K samotnému modulu som získal veľké množstvo spätnej väzby a je v komunite najpopulárnejší spomedzi ostatných alternatívnych metód ovládania aplikácie. Samotného experimentu sa zúčastnili tisíce používateľov. Pomocou hlasového ovládania sa dá v aplikácii dosiahnuť množstvo vecí a pomocou neho vieme ovládať kompletnú aplikáciu bez použitia ostatných vstupných metód. Dokonca vieme aplikáciu ovládať vo viacerých jazykoch. Najväčším problémom v súčasnosti je však nie úplne správne rozpoznanie hovorených príkazov. Na jeho zmiernenie ale vieme použiť regulárne výrazy alebo nápravu výrazov v slovníku od používateľa.
+
+Podpora ovládania pomocou reči v prehliadačoch v súčasnosti ešte nie je veľmi rozšírená a vyzerá nasledujúco:
+
+\begin{table}[H]
+  \begin{tabular}{ | l | l | l | l | l | l | l | l |}
+    \hline
+    IE & Firefox & Chrome & Safari & Opera & iOS Safari & Android & Chrome for Android \\ \hline
+    nie & nie & 25.0 & nie & nie & nie & nie & 31.0  \\
+    \hline
+  \end{tabular}
+  \caption[Podpora rozopoznávania reči]{Podpora rozopoznávania reči}
+\end{table}
+
+S použitím rozpoznania reči súvisí aj rečová syntáza, vďaka ktorej vieme interagovať pomocou reči a ešte viac zvýšiť používateľský zážitok. Nativná podpora však tiež nemá širokú podporu a pre tieto potreby bol vytvorený polyfill vďaka ktorému vieme rečovú syntézu nahradiť pomocou Audio elementu a prehravaním audia zo služby Google Translate. Porovnanie podpory v prehliadačoch vyzerá nasledujúco:
+
+\begin{table}[H]
+  \begin{tabular}{ | l | l | l | l | l | l | l | l |}
+    \hline
+    IE & Firefox & Chrome & Safari & Opera & iOS Safari & Android & Chrome for Android \\ \hline
+    nie & nie & 33.0 & 7.0 & nie & 7.0 & nie & 33.0  \\
+    \hline
+  \end{tabular}
+  \caption[Natívna podpora rečovej syntézy]{Natívna podpora rečovej syntézy}
+\end{table}
+
+\begin{table}[H]
+  \begin{tabular}{ | l | l | l | l | l | l | l | l |}
+    \hline
+    IE & Firefox & Chrome & Safari & Opera & iOS Safari & Android & Chrome for Android \\ \hline
+    9 & áno & áno & áno & áno & 4.0 & 2.3 & áno  \\
+    \hline
+  \end{tabular}
+  \caption[Podpora polyfillu rečovej syntézy]{Podpora polyfillu rečovej syntézy}
+\end{table}
+
+% subsubsection adaptive_speech (end)
+
+\subsubsection{Modul adaptive-scroll} % (fold)
+\label{sub:adaptive_scroll}
+
+Ovládanie pomocou gyroskopu bolo demonštrované vytvorením modulu adaptive-scroll \footnote{\url{https://github.com/angular-adaptive/adaptive-scroll}} a prototypovej aplikácie. V aplikácii je možné po spustení skrolovať pomocou natáčania zariadenia do strán. Skrolovanie prebieha na základe veľkosti uhlu natočenia zariadenia oproti počiatočnej polohe, čím je rozdiel väčší, tým sa vo webovej aplikácii skroluje rýchlejšie. Na skrolovanie v aplikácii nie je potrebná ďalšia interakcia používateľa, napríklad pomocou dotyku. 
+
+Experimentu sa zúčasnili tisíce používateľov a je podporovaný vo veľkom počte prehliadačoch, konkrétne v nasledujúcich:
+
+\begin{table}[H]
+  \begin{tabular}{ | l | l | l | l | l | l | l | l |}
+    \hline
+    IE & Firefox & Chrome & Safari & Opera & iOS Safari & Android & Chrome for Android \\ \hline
+    11 & áno & áno & nie & áno & 4.2 & 3.0 & áno  \\
+    \hline
+  \end{tabular}
+  \caption[Podpora získavania orientácie v prehliadačoch]{Podpora získavania orientácie v prehliadačoch}
+\end{table}
+
+Pomocou modulu vieme zvýšiť používateľský zážitok, nevieme však ovládať kompletnú webovú aplikáciu ako v prípade rečových povelov. Po vytvorení modulu a testovaní na zariadeniach sa navyše zistili problémy v skutočnej implementácii udalostí natáčania zariadenia v rôznych prehliadačoch. W3C špecifikácia orientácie zariadenia uvádza nasledovné:
 
 \begin{itemize}
   \item os X je rovnobežná na rovinu zeme, kladné hodnoty má v smere na východ, záporné na západ
@@ -733,258 +995,58 @@ Nakoľko hodnoty rotácii sú implementované v prehliadačoch rôzne, tak použ
 
 Samotné používateľské rozhranie rozšírenia obsahuje náhľad aktuálnej rotácie zariadenia na ktorom je možné zmeniť aktuálne simulovaný prehliadač. Pod ním sa nachádzajú uhly natočenia alpha, beta a gamma, ktoré je možné meniť. Tieto obsahujú pre jednotlivé prehliadače rozsahy a smer natočenia. Pri zmene rotácie na jednotlivých osiach sa zmena automaticky prejaví aj na náhľade zariadenia. 
 
-Toto rozhranie navrhnutého rozšírenia je znázornené na nasledujúcom obrázku:
+\newpage
+Vytvorená prototypová aplikácia na skrolovanie spolu s rozšírením Gyrocopter sú znázornené na nasledujúcom obrázku:
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.35\textwidth]{img/gyrocopter.png}
-  \caption[Gyrocopter - gyroskop simulátor]{
-    Gyrocopter - gyroskop simulátor}
-  \label{fig: gyrocopter}
+  \includegraphics[width=0.6\textwidth]{img/adaptivescroll.png}
+  \caption[Prototypová aplikácia vytvoreného modulu adaptive-scroll a rozšírenie Gyrocopter]{
+    Prototypová aplikácia vytvoreného modulu adaptive-scroll a rozšírenie Gyrocopter}
+  \label{fig: adaptivescroll}
 \end{figure}
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.35\textwidth]{img/gyrocopter.png}
+%   \caption[Gyrocopter - gyroskop simulátor]{
+%     Gyrocopter - gyroskop simulátor}
+%   \label{fig: gyrocopter}
+% \end{figure}
 
 Po výbere, respektíve zmene prehliadača, ktorý sa má simulovať, sa automaticky prepočítajú rozsahy pre jednotlivé uhly otáčania. Zároveň sa upravia na nich aj aktuálneho hodnoty natočenia bez toho, aby sa musela znázornená rotácia zariadenia meniť.
 
 
 % paragraph gyrocopter (end)
 
-% subsubsection gyroskop (end)
+% subsubsection adaptive_scroll (end)
 
-% subsection alternat_vne_sp_soby_ovl_dania (end)
-
-% \newpage
-\subsection{Komponenty} % (fold)
-\label{sub:komponenty}
-
-Pri adaptívnom dizajne sú dôležité aj webové komponenty s ktorými používateľ webovej aplikácie priamo interaguje. Tieto boli skúmané najmä z hľadiska optimalizácie na rôzne zariadenia a rýchlosti pripojenia.
-
-\subsubsection{Video} % (fold)
-\label{subsub:video}
-
-Populárnym doplnkom súčasných webový stránok je priložené video, ktoré sa často nachádza na serveroch YouTube alebo Vimeo.
-
-Problémom je, že pri vložení videa pomocou iframe alebo embed api sa uskotočňuje množstvo dopytov na servery a prenášajú sa zbytočné dáta aj keď používateľa video nezaujíma a vôbec si ho neprehrá. Okrem zbytočne prenášaných dát sa aj znižuje výkon, nakoľko určitý čas trvá spracovanie požiadaviek.
-
-Nasledujúce dáta sa prenesú pri zobrazení stránky, na ktorú bolo vložené video zo servera YouTube pomocou dostupného iframe API:
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/youtube.png}
-	\caption[Prenášané dáta pri požiadavke na video zo servera YouTube]{
-		Prenášané dáta pri požiadavke na video zo servera YouTube}
-	\label{fig: youtube}
-\end{figure}
-
-Celkovo sa vykoná 6 požiadaviek a prenesie sa 350 kB dát bez toho, aby používateľ spustil video. Podobná situácia sa opakuje aj pri požiadavke na video zo servera Vimeo pomocou iframe API.
-
-\newpage
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/vimeo.png}
-	\caption[Prenášané dáta pri požiadavke na video zo servera Vimeo]{
-		Prenášané dáta pri požiadavke na video zo servera Vimeo}
-	\label{fig: vimeo}
-\end{figure}
-
-V tomto prípade sa dokonca vykoná 15 požiadaviek a prenesie sa 120 kB dát. V prípade použitia javascriptového API s HTML 5 prehrávačom videa sa síce nestiahnú flashové komponenty, ale nahradia ich rovnakoveľké javascriptové súbory.
-
-Lepšie riešenie je použiť podmienené načítavanie. Najskôr sa načíta len obrázok videa a pridajú sa jednoduché štylistické prvky aby vytvorený element pripomínal video súbor a až po kliknutí sa urobia dopyty na vzdialený server s automatickým prehratím videa. Výhodou takéhoto riešenia je zmenšenie veľkosti dopytov a s tým spojené šetrenie dát používateľov. 
-
-Čo sa týka získania obrázkového náhľadu videa, tak YouTube túto možnosť priamo poskytuje a záleží len od identifikátora videa. K obrázku je tak možné pristúpiť priamo. Navyše po vykonaní požiadaviek na server po kliknutí na obrázok a následnom spustení videa pomocou api sa už daný onrázok nachádza v pamäti, tak sa nemusia robiť ďalšie požiadavky. 
-
-Samotný proces automatického spustenia YouTube videa nie je úplne jednoduchý, nakoľko nastavenie hodnoty ,,autoplay'' pri vložení elementu iframe s videom na stránku nefunguje na mobilnom prehliadači Safari, kde je táto možnosť zakázaná. V takomto prípade by sa po kliknutí na obrázok videa načítal len element s videom a aby sa samotné video začalo prehrávať očakáva sa ďalšie kliknutie. Takéto správanie je neželené a je proti používateľskému zážitku. 
-
-Preto bolo potrebné vymyslieť lepšie riešenie. To spočíva v načítaní scriptu s javascriptovým youtube API a následným vytvorením iframe elementu s videom až pomocou neho. Takto máme prístup k programátorskému ovládaniu prehravača videa a môžme ho spustiť keď potrebujeme, teda po kliknutí na obrázok s náhľadom videa. Takéto riešenie už fungujé aj na iOS s mobilným prehliadačom Safari.
-
-Stále však máme problém pri staršej verzii iOS 5 a menej, tam nefunguje ani programátorske spustenie videa. V tejto verzii iOS sa však ešte distribuovala predinštalovaná aplikácia na prehrávanie Youtube videí, ktorá bola v neskorších verziách odstránená a je ju možné stiahnúť z iTunes. Výhodou je, že video môžme otvoriť priamo v nej pomocou youtube url schémy. Musíme však používaný prehliadač správne detekovať a následne sa rozhodnúť, aké prehrávanie zvolíme.
-
-Na detekovanie funkcionality otvorenia youtube videa v aplikácii pomocou systému iOS a jej zisťovaním len z pola ,,user agent'' nie je správne, nakoľko by bolo potrebné získať úplne všetky verzie systému, ktorých je mnoho, a následne porovnať s verziou zariadenia.
-
-Lepším riešením je vytvorenie testu funkčnosti prehrávania videa, ktoré je riešené pomocou nástroja Modernizr\footnote{Modernizr \url{http://modernizr.com/} je JavaScriptová knižnica, ktorá detekuje dostupnosť natívnej imlementácie nových technológií v prehliadači.} umožňujúcim detekciu základných HTML5 a CSS3 vlastností prehliadača a vytváranie vlastných testov. Následne sa na základe výsledku testu rozhodnemu akú akciu vykonať. Problémom je, že testy sa vykonávajú po načítaní stránky a nechceme používateľovi automaticky otvoriť natívnu aplikáciu alebo ho presmerovať na stránky youtube. Preto je zvolená iná varianta a detekuje sa podbora vlastnosti, ktorá bola pridaná až v novšej verzii iOS 6. Konkrétne sa jedná o podboru jednotiek ,,vh a vw'' (viewport height a viewport width) slúžiacich na nastavenie veľkosti DOM elementu. Detekcia či je zariadenie iOS vychádza z pola user agent, ale už sa nezisťuje jej verzia.
-
-Výsledok je taký, že po kliknutí na obrázok s náhľadom videa a vyhodnotení testu prehrávania sa začne prehrávať v prehliadači alebo v natívnej aplikácii.
-
-V prípade Vimea je situácia trochu komplikovanejšia pretože k náhľadovému obrázku sa priamo nevieme dostať a je potrebné urobiť jednu požiadavku na API, ktorá vráti informácie o videu. Vykonanie požiadavky síca nejaký čas trvá, ale aj tak je výsledok z pohľadu prenášaný údajov lepší ako robiť požiadavku priamo na samotné video.
-
-S prehrávaním videa zo služby vimeo je situácia podobná, neexistuje však natívna aplikácia a po klinutí na náhľad videa je používateľ v starších verziách iOS presmerovaný na stránky vimea, v novších verziách iOS a v Androide sa mu automaticky prehrá.
-
-% subsubsection video (end)
-
-
-\subsubsection{Mapy} % (fold)
-\label{subsub:mapy}
-
-Mapy podobne ako videá vytvárajú nechcené dátové prenosy, dokonca ich ešte aj prevyšujú pretože sa neprenášajú len údaje o aktuálne zobrazenej časti mapy ale aj jej okolie. Okrem nich navyše na webe neposkytujú taký plnohodnotný zážitok z prezerania ako v natívnej aplikácii. Nevýhodou je aj nemožnosť posúvania webovej stránky pokiaľ je element s mapou väčší ako je rozlíšenie displeja mobilného zariadenia, lebo eventy sú zachytávané mapou a posúva sa tá.
-
-Používateľ nemusí chcieť okamžite interagovať s mapou a v takomto prípade ho zbytočne zaťažuje. Výhodnejšie je tak zobraziť len náhľad mapy, ktorý sa načíta rýchlejšie pretože šetrí prenášané dáta, a pokiaľ sa používateľ chce dozvedieť viac, tak len jednoducho na mapu klikne. V takomto prípade sa mu automaticky načíta plne interaktívna mapa. Na zobrazenie náhľadu mapy existuje API v službe google maps\footnote{\url{https://developers.google.com/maps/documentation/staticmaps/}}, takže je možné využiť priamo to. Nevýhodou je, že počet požiadaviek za deň, ktoré sú zadarmo, je obmedzený, po získaní API kľúča je možné ich spraviť 25000, ďalšie sú spoplatňované.
-
-Rozšírením na mobilných zariadeniach iOS je možnosť otvorenia mapy priamo v natívnej aplikácii, ktorá prináša ešte väčší používateľský zážitok ako zobrazenie na webe. To je uskutočňované pomocou url schémy. V starších verziách iOS sa nachádzala natívna aplikácia na Google API a bola vyvolaná otvorením nasledujúceho odkazu, kde bolo možné zadávať parametre zobrazenia.
-
-\begin{verbatim}
-http://maps.google.com/
-\end{verbatim}
-
-S príchodom iOS 6 bola aplikácia nahradená vlastnom Apple aplikáciou, na ktorej spustenie sa zmenila aj url schéma a pôvodná otvorí mapu len v prehliadači. Výhodou je, že na starších, respektíve nepodporovaných zariadeniach nastáva presmerovanie na stránky Google a tak na rovnakom odkaze funguje spúšťanie aj pôvodnej aplikácie. Nová url schéma má nasledujúci tvar:
-
-\begin{verbatim}
-http://maps.apple.com/
-\end{verbatim}
-
-% subsubsection mapy (end)
-
-
-\subsubsection{Lightboxy} % (fold)
-\label{subsub:lightboxy}
-
-Lightbox je technika umožňujúca zobrazovať webový obsah v modálnych oknách nachádzajúcich sa nad úrovňou pôvodnej stránky.
-
-Hlavným problémom použitia ,,lightboxov'' na mobilných zariadeniach je nesprávne zobrazovanie stránok pokiaľ nové okno je väčšie ako displej. V takomto prípade by bolo vhodnejšie používateľa presmerovať priamo na novú stránku.
-
-% subsubsection lightboxy (end)
-
-\subsubsection{Otvorenie v aplikácii / Stiahnutie aplikácie} % (fold)
-\label{ssub:otvorenie_v_aplik_cii}
-
-V súčasnosti sme opklopovaný množstvom informačných zdrojov, ktoré sa zväčša nachádzajú na internete dostupné na konkrétnej webovej adrese. Na tieto zdroje existuje množstvo odkazov z rôznych webových stránok, sociálnych sietí či mobilných aplikácii, ktoré zobrazia ich obsah v prehliadači.
-
-\begin{fancybox}
-\textit{,,Links don’t open apps.'' Jason Grigsby} \cite{links}
-\end{fancybox}
-
-Webové odkazy neotvárajú natívne aplikácie, čo je technicky pravda, no realita je trochu odlišná. Prepojenie webovej časti aplikácie s natívnou umožňuje otvárať komplexnejšie úlohy, na ktoré je vo webe nedostatočny výkon, priamo v natívnom kóde. To umožní plynulejší chod aplikácie a lepší používateľský zážitok.
-
-Prepájanie aplikácii sa uskutočňuje pomocou ,,custom url schémy'' \cite{urlscheme}, ktorá je špecifická pre jednotlivé operačné systémy zariadení. Nevýhodou vlastných odkazov je, že pokiaľ používateľ nemá nainštalovanú aplikáciu, tak po kliknutí sa objaví celkom nepekná chybová hláška.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.35\textwidth]{img/customerror.png}
-	\caption[Chybová hláška po otvorení custom URL schémy, pokiaľ aplikácia neexistuje]{
-		Chybová hláška po otvorení custom URL schémy, pokiaľ aplikácia neexistuje \cite{customscheme}.\\
-		Prevzaté z http://www.lukew.com/ff/entry.asp?1654}
-	\label{fig: customerror}
-\end{figure}
-
-Lepším riešením je detekovanie, či si používateľ stiahol natívnu aplikáciu a odkaz na otvorenie v nej vytvoriť až potom, čo je overenie úspešné. Pokiaľ by nebolo, tak by sa mohlo zobraziť tlačítko na stiahnutie natívnej aplikácie, ktoré opäť musí byť prispôsobené platforme na ktorej na stránku prispôsobujeme, pokiaľ nechceme používateľa zahltitť všetkými platformami ktoré podporujeme.
-
-Samotný proces detekcie či má používateľ nainštalovanú našu aplikáciu vôbec nie je triviálny, pretože na webe neexistuje žiadne dostupné API, ktoré by zahrňovalo všetky platformy. Apple síce vydal možnosť otvorenia aplikácie pomocou ,,Smart Banners'', ale až v iOS 6 a tak táto možnosť nie je úplne použiteľná.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.5\textwidth]{img/smartappbanner.png}
-	\caption[Otvorenie natívnej aplikácie v iOS 6]{
-		Otvorenie natívnej aplikácie v iOS 6 \cite{smartappbanner}.\\
-		Prevzaté z http://developer.apple.com/}
-	\label{fig: smartappbanner}
-\end{figure}
-
-Navyše ,,smart banner'' je priamo definovaný v html meta tagu aplikácie. Na stránke existuje len jeden ktorý volá url schému aplikácie a aj ten má prednastevený vzhľad v podobne okna v hornej časti obrazovky. Keby chceme vlastnú natívnu aplikáciu zavolať z viacerých častí webovej, prípadné volať viacero natívnych aplikácií, tak toto riešenie je nepostačujúce. Nemôže byť upravané vlastným potrebám.
-
-Jediné možné riešenie je len v spolupráci s natívnou aplikáciou, aj tak sa však musí vyvolať otvorenie stránky v prehliadači, kde sa dá už do cookies alebo lokálneho úložiska programátorksy zapísať existencia aplikácie. Vytvorenie samotného ,,webView'' komponentu s webovou stránkou vrámci aplikácie a následné zatvorenie nestačí. Prehliadač má oddelené úložiská stránok pre rôzne typy prístupov ako sú s internetový prehliadač, aplikácia a v iOS aj pre otvorenie internetovaj stránky z plochy. Možnosť ako tento proces zamaskovať je skrytá v procese registrácie, keď po otvorení aplikácie a zaregistrovaní pošleme používateľovi e-mail s potvrdzujúcim odkazom, ktorý otvorí webovú stránku v prehliadači.
-
-
-% subsubsection otvorenie_v_aplik_cii (end)
-
-% subsection komponenty (end)
-
-\subsection{Nástroje} % (fold)
-\label{sub:n_stroje}
-
-\subsubsection{Detekcia} % (fold)
-\label{ssub:detekcia}
-
-Pre potreby rozpoznávania platformy v aplikácii bol vytvorený modul detekcie podľa jedinečného ,,user agent'' textu. Modul umožňuje detekovať iOS a Android zariadenia. Rozpoznávanie prebieha na základe regulárneho výrazu, kde pri metóde detekcie iOS zariadenia sa kontroluje výsky slov ,,iPhone'', ,,iPad'' alebo ,,iPod'', ktoré jedinečne definujú platformu. Pri Android zariadeniach je detekcia jednoduchšia, pretože stačí ak sa v identifakačnom texte nachádza slovo ,,Android''. Príklad metódy detekcie má nasledujúci tvar:
-
-\begin{lstlisting}
-var isAndroid = function(userAgent){
-  return (/(Android)/gi).test(userAgent);
-}
-\end{lstlisting}
-
-Pri konfigurácii webovej aplikácie je možné aj aktálny ,,user agent'' text nahradiť vlasnou hodnotou, takže prehliadač sa vždy môže správať ako požadované zariadenie. Problém pri detekcii môže nastať, pokiaľ by user agent už bol raz nahradený používateľom, respektíve by sa prestali používať súčasné identifikátory. Potom by sa detekovala nesprávna platforma.
-
-% subsubsection detekcia (end)
-
-% subsection n_stroje (end)
-
-% section n_stroj_na_overenie (end)
-
-\section{Overenie} % (fold)
-\label{sec:overenie}
-
-V súčasnosti je overenie jednotlivých častí projektu riešené vytvorením demo aplikácií ku každému vytvorenému modulu a pomocou získanej spätnej väzby z komunity. Aktuálne sú implementované nasledujúce súčasti systému:
-
-\begin{itemize}
-  \item \textbf{angular-adaptive/adaptive-speech}\\
-    modul na ovládanie aplikácie pomocou reči
-  \item \textbf{angular-adaptive/adaptive-scroll}\\
-    modul na ovládanie aplikácie pomocou gyroscopu
-  \item \textbf{angular-adaptive/adaptive-motion}\\
-    modul na ovládanie aplikácie pomocou pohybu
-  \item \textbf{angular-adaptive/adaptive-detection}\\
-    modul na detekovanie zariadenia
-  \item \textbf{angular-adaptive/adaptive-googlemaps}\\
-    webový komponent google máp
-
-  \item \textbf{Gyrocopter}\\
-    extension na emulovanie gyroskopu do Chrome Developer Tools
-\end{itemize}
-
-V ďalšom období sa plánuje ich zlepšovanie a integrácia do reálne nasadenej webovej aplikácie, s ktorou prichádza do vstyku každý deň množstvo ľudí. Na jej základe sa vytvoria ďalšie vyhodnotenia.
-
-\newpage
-\subsection{Adaptívne ovládacie metódy} % (fold)
-\label{sub:adapt_vne_ovl_dacie_met_dy}
-
-\subsubsection{Modul adaptive-speech} % (fold)
-\label{sub:adaptive_speech}
-
-Ovládanie pomocou reči bolo demonštrované vytvorením modulu adaptive-speech \footnote{\url{https://github.com/angular-adaptive/adaptive-speech}} a demo aplikácie nad existujúcim systémom TodoMVC \footnote{\url{http://todomvc.com/}}, ktorý demonštruje vytvorenie todo aplikácie v rôznych javascriptových frameworkoch. 
-
-Po spustení aplikácie a potvrdení prístupových povolení od používateľa k používaniu mikrofónu nie je potrebné ďalšia interakcia okrem zadávania rečových príkazov, nakoľko prebieha kontinuálne rozpoznávanie reči.
-
-V aplikácii je umožnené pridávanie novej úlohy, jej označenie za splnenú alebo úplne odstránenie zo zoznamu. Taktiež je umožnené prechádzanie medzi jej jednotlivými časťami a prepinaním zobrazenia všetkých úlohoch, aktívnych úloh a splnených úloh. Rovnako je umožnené pomocou rečového príkazu aj vymazať všetky splnené úlohy. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{img/adaptivespeech.png}
-  \caption[Demo vytvoreného modulu adaptive-speech]{
-    Demo vytvoreného modulu adaptive-speech}
-  \label{fig: adaptivespeech}
-\end{figure}
-
-K samotnému modulu som získal veľké množstvo spätnej väzby a je v komunite najpopulárnejší spomedzi ostatných alternatívnych metód ovládania aplikácie.
-
-% subsubsection adaptive_speech (end)
-
-\newpage
-\subsubsection{Modul adaptive-scroll} % (fold)
-\label{sub:adaptive_scroll}
-
-Ovládanie pomocou gyroskopu bolo demonštrované vytvorením modulu adaptive-scroll \footnote{\url{https://github.com/angular-adaptive/adaptive-scroll}} a demo aplikácie. V aplikácii je možné po spustení skrolovať pomocou natáčania zariadenia do strán. Skrolovanie prebieha na základe veľkosti uhlu natočenia zariadenia oproti počiatočnej polohe, čím je rozdiel väčší, tým sa vo webovej aplikácii skroluje rýchlejšie. Na skrolovanie v aplikácii nie je potrebná ďalšia interakcia používateľa, napríklad pomocou dotyku. Na lepší vývoj webovej aplikácie a emulovanie gyroskopu bolo vytvorené aj rozšírenie pre Chrome Developer Tool pod názvom Gyrocopter \footnote{\url{https://github.com/janantala/Gyrocopter}}. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{img/adaptivescroll.png}
-  \caption[Demo vytvoreného modulu adaptive-scroll a rozšírenie Gyrocopter]{
-    Demo vytvoreného modulu adaptive-scroll a rozšírenie Gyrocopter}
-  \label{fig: adaptivescroll}
-\end{figure}
-
-% subsubsection adaptive_croll (end)
-
-\newpage
 \subsubsection{Modul adaptive-motion} % (fold)
 \label{sub:adaptive_motion}
 
-Ovládanie pomocou pohybu bolo demonštrované vytvorením modulu adaptive-motion \footnote{\url{https://github.com/angular-adaptive/adaptive-motion}} a demo aplikácie. V nej je umožnené sledovanie používateľa a možnosť výberu jeho vizualizácie, či už klasický obraz alebo upravený zobrazením len detekovaním jeho kože alebo detekciou hrán. V aplikácii prebieha kontinuálne rozpoznávanie používateľa a postupne sa vypisujú rozpoznané gestá, pričom posledné rozpoznané gesto sa zakaždým zvýrazní. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
+Ovládanie pomocou pohybu bolo demonštrované vytvorením modulu adaptive-motion \footnote{\url{https://github.com/angular-adaptive/adaptive-motion}} a prototypovej aplikácie. V nej je umožnené sledovanie používateľa a možnosť výberu jeho vizualizácie, či už klasický obraz alebo upravený zobrazením len detekovaním jeho kože alebo detekciou hrán. V aplikácii prebieha kontinuálne rozpoznávanie používateľa a postupne sa vypisujú rozpoznané gestá, pričom posledné rozpoznané gesto sa zakaždým zvýrazní. Vytvorená prototypová aplikácia je znázornená na nasledujúcom obrázku:
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{img/adaptivemotion.png}
-  \caption[Demo vytvoreného modulu adaptive-motion]{
-    Demo vytvoreného modulu adaptive-motion}
+  \includegraphics[width=0.6\textwidth]{img/adaptivemotion.png}
+  \caption[Prototypová aplikácia vytvoreného modulu adaptive-motion]{
+    Prototypová aplikácia vytvoreného modulu adaptive-motion}
   \label{fig: adaptivemotion}
 \end{figure}
+
+Experimentu sa opäť zúčasnili tisíce používateľov a vytvorený modul je podporovaný v týchto konkrétnych prehliadačoch:
+
+\begin{table}[H]
+  \begin{tabular}{ | l | l | l | l | l | l | l | l |}
+    \hline
+    IE & Firefox & Chrome & Safari & Opera & iOS Safari & Android & Chrome for Android \\ \hline
+    nie & 17 & 21 & nie & 18 & nie & nie & 33  \\
+    \hline
+  \end{tabular}
+  \caption[Podpora prístupu ku kamere v prehliadačoch]{Podpora prístupu ku kamere v prehliadačoch}
+\end{table}
+
+Použitím modulu vieme zvýšiť používateľský zážitok, nedokážeme však len pomocou neho ovládať celú webovú aplikáciu. Preto sa dá použiť len ako doplnková metóda interakcie čomu nasvädčuje aj získaný ohlas z komunity. Navyše vo svetlých a tmavých scénach môžu nastať problémy pri detekcii.
 
 % subsubsection adaptive_motion (end)
 
@@ -1000,22 +1062,24 @@ Pri adaptívnych webových komponentoch sme sledovali rýchlosti načítavania s
 \begin{table}[H]
   \begin{tabular}{ | l | l | l | l |}
     \hline
-    Pripojenie & Dátový tok & Latencia & Zahodené pakety \\ \hline
-    2G & 240 kbps & 400 ms & 0  \\  \hline
-    3G & 780 kbps & 100 ms & 0  \\ \hline
-    4G & 20 Mbps & 50 ms & 0  \\ \hline
-    Broadband & 100 Mbps & 5 ms & 0  \\
+    Pripojenie & Dátový tok & Latencia & Stratené pakety \\ \hline
+    2G & 240 kbps & 400 ms & 5 \%  \\  \hline
+    3G & 780 kbps & 100 ms & 2 \%  \\ \hline
+    4G & 20 Mbps & 50 ms & 1 \%  \\ \hline
+    Broadband & 100 Mbps & 5 ms & 0 \%  \\
     \hline
   \end{tabular}
   \caption[Konfigurácie internetových pripojení]{Konfigurácie internetových pripojení}
 \end{table}
 
-Emulácia internetového pripojania prebiahala pomocou programu ,,Network Lint Conditioner'' a ďalej sa uvádzajú priemerné namerané hodnoty z 10 experimentov.
+Emulácia internetového pripojania prebiahala pomocou programu ,,Network Lint Conditioner'' a ďalej sa uvádzajú priemerné namerané hodnoty z 10 experimentov spolu so smerodajnými odchýlkami pre jednotlivé druhy internetového pripojenia.
 
 \subsubsection{Modul adaptive-youtube} % (fold)
 \label{sub:adaptive_youtube}
 
 Webový komponent youtube videa bol demonštrovaný vytvorením modulu adaptive-youtube \footnote{\url{https://github.com/angular-adaptive/adaptive-youtube}} a demo aplikácie. V aplikácii je umožnené meniť automatické načítavanie videa. Pokiaľ sa pristupuje z mobilného zariadenia a pomalého pripojenia na internet, tak sa zobrazí len náhľad videa v podobe obrázku. Až po kliknutí na video sa dotiahne samotné video a začne sa prehrávať, respektíve video sa otvorí v natívnej mobilnej aplikácii.
+
+Použitím vytvoreného modulu vieme ušetriť mnoho dát a zároveň aj znížiť množstvo dopytov na servery. Porovnanie priemerného množstva spotrebovaných dát a vytvorených dopytov pre jedno youtube video je zobrazené v nasledujúcej tabuľke:
 
 \begin{table}[H]
   \begin{tabular}{ |c|c|c|c| }
@@ -1028,9 +1092,11 @@ Webový komponent youtube videa bol demonštrovaný vytvorením modulu adaptive-
   \caption[Množstvo požiadaviek a prenesených dát pre youtube video]{Množstvo požiadaviek a prenesených dát pre youtube video}
 \end{table}
 
+Z toho je zrejme, že použitím vytvoreneho modulu sa zrýchli aj načítavanie webovej stránky. Porovnanie načítavania stránky s použitím klasického prístupu vloženia videa a použitím nášho modulu spolu s jednotlivými uskutočnenými požiadavkami sa nachádza na nasledujúcich obrázkoch:
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1.0\textwidth]{img/load/timeline-y-e.png}
+  \includegraphics[width=0.9\textwidth]{img/load/timeline-y-e.png}
   \caption[Časová os načítavania stránky s použitím youtube embed videa]{
     Časová os načítavania stránky s použitím youtube embed videa}
   \label{fig: timeline-y-e}
@@ -1038,51 +1104,61 @@ Webový komponent youtube videa bol demonštrovaný vytvorením modulu adaptive-
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1.0\textwidth]{img/load/timeline-y-a.png}
+  \includegraphics[width=0.9\textwidth]{img/load/timeline-y-a.png}
   \caption[Časová os načítavania stránky s použitím youtube modulu]{
     Časová os načítavania stránky s použitím youtube modulu}
   \label{fig: timeline-y-a}
 \end{figure}
 
+Časové osy načítania stránky sú znázornené pre broadband pripojenie. Ako sa prejaví zmena rýchlosti na iných druhoch najmä mobilných pripojení je znázornené na nasledujúcom grafe:
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{img/load/youtube-fullload.png}
+  \includegraphics[width=0.6\textwidth]{img/load/youtube-fullload.png}
   \caption[Porovnanie rýchlosti plného načítania stránky s youtube komponentom]{
     Porovnanie rýchlosti plného načítania stránky s youtube komponentom}
   \label{fig: youtube-fullload}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{img/load/youtube-load.png}
-  \caption[Porovnanie rýchlosti load udalosti stránky s youtube komponentom]{
-    Porovnanie rýchlosti load udalosti stránky s youtube komponentom}
-  \label{fig: youtube-load}
-\end{figure}
+Rozdiel v rýchlosti načítania kompletnej stránky aj s externými zdrojmi je veľmi výrazný a pri pomalšom pripojení narastá. Použitím nášho modulu vieme zrýchliť načítanie stránky o sekundy a rozdiel sa prejaví aj pri rýchlejších pripojeniach. Keďže v súčasnosti je na mobilných platformách rozšírené 3G pripojenie, tak sa podstatne zvýši aj použivateľský zážitok, keďže tým ubúda podstatná doba čakania a zároveň používateľom ušetríme aj dáta z predpladtných internetových balíkov.
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.6\textwidth]{img/load/youtube-load.png}
+%   \caption[Porovnanie rýchlosti load udalosti stránky s youtube komponentom]{
+%     Porovnanie rýchlosti load udalosti stránky s youtube komponentom}
+%   \label{fig: youtube-load}
+% \end{figure}
+
+Použitím nášho modulu sa však zvýši aj čas zostavenia DOM stromu stránky. Nasledujúci graf nie je prekvapením keďže oproti vloženiu videa do stránky potrebujeme ešte načítavať a spúšťať naše skripty. Napriek tejto počiatočnej nevýhode však umožníme výrazné zrýchlenie načítania stránky s youtube videom.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{img/load/youtube-dom.png}
+  \includegraphics[width=0.6\textwidth]{img/load/youtube-dom.png}
   \caption[Porovnanie rýchlosti zostavenia dom stromu s youtube komponentom]{
     Porovnanie rýchlosti zostavenia dom stromu s youtube komponentom}
   \label{fig: youtube-dom}
 \end{figure}
 
+
 % subsubsection adaptive_youtube (end)
 
-\newpage
+% \newpage
 \subsubsection{Modul adaptive-googlemaps} % (fold)
 \label{sub:adaptive_googlemaps}
 
 Webový komponent google máp bol demonštrovaný vytvorením modulu adaptive-googlemaps \footnote{\url{https://github.com/angular-adaptive/adaptive-googlemaps}} a demo aplikácie. V aplikácii je umožnené meniť zvýraznené body, centrovanie, priblíženie a zobrazený terén a automaticky sa prispôsobí používateľovmu zariadeniu. Pokiaľ sa pristupuje z mobilného zariadenia a pomalého pripojenia na internet, tak sa zobrazí len náhľad mapy v podobe obrázku. Až po kliknutí na mapu sa dotiahne interaktívna mapa, respektíve mapa sa otvorí v natívnej mobilnej aplikácii. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
 
+\newpage
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.5\textwidth]{img/adaptivegooglemaps.png}
-  \caption[Demo vytvoreného modulu adaptive-googlemaps]{
-    Demo vytvoreného modulu adaptive-googlemaps}
+  \caption[Prototypová aplikácia vytvoreného modulu adaptive-googlemaps]{
+    Prototypová aplikácia vytvoreného modulu adaptive-googlemaps}
   \label{fig: adaptivemotion}
 \end{figure}
+
+Použitím vytvoreného modulu vieme opäť ušetriť mnoho dát a znížiť množstvo dopytov na servery. Porovnanie priemerného množstva spotrebovaných dát a vytvorených dopytov pre jeden element google mapy je zobrazené v nasledujúcej tabuľke:
 
 \begin{table}[H]
   \begin{tabular}{ |c|c|c|c| }
@@ -1095,25 +1171,31 @@ Webový komponent google máp bol demonštrovaný vytvorením modulu adaptive-go
   \caption[Množstvo požiadaviek a prenesených dát pre google mapy]{Množstvo požiadaviek a prenesených dát pre google mapy}
 \end{table}
 
+Z toho je zrejme, že použitím vytvoreneho modulu sa opäť zrýchli aj načítavanie webovej stránky. Porovnanie načítavania stránky s použitím klasického prístupu vloženia mapy a použitím nášho modulu a ako sa prejaví zmena rýchlosti na iných druhoch najmä mobilných pripojení je znázornené na nasledujúcom grafe:
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{img/load/gmaps-fullload.png}
+  \includegraphics[width=0.6\textwidth]{img/load/gmaps-fullload.png}
   \caption[Porovnanie rýchlosti plného načítania stránky s google maps komponentom]{
     Porovnanie rýchlosti plného načítania stránky s google maps komponentom}
   \label{fig: gmaps-fullload}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{img/load/gmaps-load.png}
-  \caption[Porovnanie rýchlosti load udalosti stránky s google maps komponentom]{
-    Porovnanie rýchlosti load udalosti stránky s google maps komponentom}
-  \label{fig: gmaps-load}
-\end{figure}
+Rozdiel v rýchlosti načítania kompletnej stránky aj s externými zdrojmi je v prípade google mapy ešte výraznejší ako pre zoutube video. Použitím nášho modulu vieme zrýchliť načítanie stránky o sekundy a rozdiel sa prejaví aj pri rýchlejších pripojeniach. Najmä na mobilných pripojeniach sa tým podstatne zvýši aj použivateľský zážitok, keďže tým ubúda podstatná doba čakania a opäť používateľom ušetríme aj dáta z predpladtných internetových balíkov.
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.6\textwidth]{img/load/gmaps-load.png}
+%   \caption[Porovnanie rýchlosti load udalosti stránky s google maps komponentom]{
+%     Porovnanie rýchlosti load udalosti stránky s google maps komponentom}
+%   \label{fig: gmaps-load}
+% \end{figure}
+
+Použitím nášho modulu sa opäť zvýši aj čas zostavenia DOM stromu stránky ako v prípade youtube videa, keďže oproti vloženiu mapy do stránky potrebujeme načítavať a spúšťať naše skripty. Napriek tejto počiatočnej nevýhode však umožníme výrazné zrýchlenie načítania stránky s google mapou.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{img/load/gmaps-dom.png}
+  \includegraphics[width=0.6\textwidth]{img/load/gmaps-dom.png}
   \caption[Porovnanie rýchlosti zostavenia dom stromu s google maps komponentom]{
     Porovnanie rýchlosti zostavenia dom stromu s google maps komponentom}
   \label{fig: gmaps-dom}
@@ -1132,17 +1214,28 @@ Webový komponent google máp bol demonštrovaný vytvorením modulu adaptive-go
 
 V práci som navrhol a vytvoril možnosti adaptácie webových aplikácií, či už pomocou alternatívnych možností ovládania rečou, pohybom alebo gyroskopom, prispôsobovaním sa webových komponentov podmienkam používateľa alebo samotných nástrojov použitých pri vývoji adaptívnej webovej aplikácie.
 
-Overením ich používania sa zistilo, že alternatívne spôsoby ovládania sú celkom dobrý doplnok v súčasnosti ku klasickej interakcii so zariadeniami. Pomocou webových komponentov sa zrýchlilo načítavanie aplikácie a ušetrilo sa množstvo prenášaných dát. Verím, že v budúcnosti sa budú takéto spôsoby ešte viac presadzovať.
+Vytvorené nástroje sú umiestnené na serveri github pod open source licenciou, kde komunita o ne prejavila veľký záujem. Dostal som k nim množstvo pozitívnej spätnej väzby od kvalifikovaný ľudí, pull requestov na drobné úpravy funkcionality či dokumentácie a ďalej sa tak rozvíjajú aj za pomoci ostatných ľudí, za čo by som sa im chcel ešte raz poďakovať. Vďaka tomu som mal možnosť naučiť sa množstvo nových vecí z tvorby open source aplikácií a následne nadobudné poznatky ďalej prezentovať ostatným vývojárom. Zároveň sa referencie na našu prácu objavili v množstve rôznych vydaní newsletterov, konferencií či iných prezentácií:
 
-Vytvorené nástroje sú umiestnené na serveri github pod open source licenciou, kde komunita a ne prejavila veľký záujem. Dostal som k nim množstvo pozitívnej spätnej väzby od kvalifikovaný ľudí, pull requestov na drobné úpravy funkcionality či dokumentácie a ďalej sa tak rozvíjajú aj za pomoci ostatných ľudí, za čo by som sa im chcel ešte raz poďakovať. Vďaka tomu som mal možnosť naučiť sa množstvo nových vecí z tvorby open source aplikácií a následne nadobudné poznatky ďalej prezentovať ostatným vývojárom.
+\begin{itemize}
+  \item \textbf{JavaScript Weekly \#135}
+  \item \textbf{AngularJS Weekly}
+  \item \textbf{deSymfony 2013}, 20-22 jún 2013, Madrid
+  \item \textbf{Lone StarPHP 2013}, 28-29 jún 2013, Dallas, TX
+  \item \textbf{WebElement \#25}, 5 december 2013, Bratislava
+\end{itemize}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1.0\textwidth]{img/github.png}
+  \includegraphics[width=0.7\textwidth]{img/github.png}
   \caption[Umiestnenie projektu na serveri github]{
     Umiestnenie projektu na serveri github\\
     \url{https://github.com/angular-adaptive}}
   \label{fig: github}
 \end{figure}
+
+Overením ich používania sa zistilo, že alternatívne spôsoby ovládania sú celkom dobrý doplnok v súčasnosti ku klasickej interakcii so zariadeniami. Tak ako sme očakávali, najpopopulárnejším alternatívnym spôsobom ovládania je ovládanie pomocou reči, nakoľko pomocou neho sa dá kontrolovať celá webová aplikácia len za pomoci rečových príkazov. Ovládania pomocou detakcie pohybu z gyroskopu a video kamery sa tiež presadili, neboli však až na takej úrovni ako ovládanie pomocou reči. Hlavným dôvodom sú výrazne limitované možnosti kde sa dá takéto ovládanie využiť a obe slúžia len ako doplnkový spôsob interakcie. Použitie alternatívneho ovládania je ale aj tak dobrou príležitosťou na zvýšenie používateľského zážitku.
+
+Adaptívne webové komponenty sú dobrý spôsob ako vieme ušetriť množstvo prenášaných dát. Ich použitím sa zrýchlilo načítavanie aplikácie a s tým aj používateľský zážitok. Avšak aj tu existujú limity, nakoľko množstvo webových stránok si potrebuje prispôsobiť webové komponenty vlastným požiadavkam. To preukázal aj nižší záujem z komunity oproti adaptívnym vstupným metódam. Sú však veľmi dôležitou súčasťou webu a verím, že v budúcnosti sa budú takéto spôsoby ešte viac presadzovať.
+
 
 % section z_ver (end)
