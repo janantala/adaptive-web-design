@@ -1114,7 +1114,14 @@ Z toho je zrejme, že použitím vytvoreneho modulu sa zrýchli aj načítavanie
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{img/load/youtube-fullload.png}
+  \begin{subfigure}[b]{0.6\textwidth}
+          \includegraphics[width=\textwidth]{img/load/youtube-fullload.png}
+  \end{subfigure}%
+  \begin{subfigure}[b]{0.32\textwidth}
+          \includegraphics[width=\textwidth]{img/load/y-std-l.png}
+  \end{subfigure}%
+  % \includegraphics[width=0.6\textwidth]]{img/load/youtube-fullload.png}
+  % \includegraphics[width=0.4\textwidth]{img/load/y-std-l.png}
   \caption[Porovnanie rýchlosti plného načítania stránky s youtube komponentom]{
     Porovnanie rýchlosti plného načítania stránky s youtube komponentom}
   \label{fig: youtube-fullload}
@@ -1134,7 +1141,13 @@ Použitím nášho modulu sa však zvýši aj čas zostavenia DOM stromu stránk
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{img/load/youtube-dom.png}
+  \begin{subfigure}[b]{0.6\textwidth}
+          \includegraphics[width=\textwidth]{img/load/youtube-dom.png}
+  \end{subfigure}%
+  \begin{subfigure}[b]{0.32\textwidth}
+          \includegraphics[width=\textwidth]{img/load/y-std-dom.png}
+  \end{subfigure}%
+  % \includegraphics[width=0.6\textwidth]{img/load/youtube-dom.png}
   \caption[Porovnanie rýchlosti zostavenia dom stromu s youtube komponentom]{
     Porovnanie rýchlosti zostavenia dom stromu s youtube komponentom}
   \label{fig: youtube-dom}
@@ -1175,7 +1188,13 @@ Z toho je zrejme, že použitím vytvoreneho modulu sa opäť zrýchli aj načí
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{img/load/gmaps-fullload.png}
+  \begin{subfigure}[b]{0.6\textwidth}
+          \includegraphics[width=\textwidth]{img/load/gmaps-fullload.png}
+  \end{subfigure}%
+  \begin{subfigure}[b]{0.32\textwidth}
+          \includegraphics[width=\textwidth]{img/load/gm-std-l.png}
+  \end{subfigure}%
+  % \includegraphics[width=0.6\textwidth]{img/load/gmaps-fullload.png}
   \caption[Porovnanie rýchlosti plného načítania stránky s google maps komponentom]{
     Porovnanie rýchlosti plného načítania stránky s google maps komponentom}
   \label{fig: gmaps-fullload}
@@ -1195,7 +1214,13 @@ Použitím nášho modulu sa opäť zvýši aj čas zostavenia DOM stromu strán
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{img/load/gmaps-dom.png}
+  \begin{subfigure}[b]{0.6\textwidth}
+          \includegraphics[width=\textwidth]{img/load/gmaps-dom.png}
+  \end{subfigure}%
+  \begin{subfigure}[b]{0.32\textwidth}
+          \includegraphics[width=\textwidth]{img/load/gm-std-dom.png}
+  \end{subfigure}%
+  % \includegraphics[width=0.6\textwidth]{img/load/gmaps-dom.png}
   \caption[Porovnanie rýchlosti zostavenia dom stromu s google maps komponentom]{
     Porovnanie rýchlosti zostavenia dom stromu s google maps komponentom}
   \label{fig: gmaps-dom}
