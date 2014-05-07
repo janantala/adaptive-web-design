@@ -222,7 +222,7 @@ V prípade zisťovania podpory jednotlivých vlastností je však lepšie priamo
 
 S príchodom prvých mobilných zariadení existoval rozdiel medzi mobilným webom a webom pre desktopy a tak bolo pomocou servera jednoduché zistiť, aká verzia sa má zariadeniu zobraziť.
 
-Pretože dnes už existuje mnoho zariadení od mobilných cez tablety až po klasické počítače a vzájomne sa prelínajú, je potrebné zabezpečiť, aby sa webový obsah zobrazoval správne na každom z nich.
+Pretože dnes už existuje mnoho zariadení od mobilných cez tablety až po klasické počítače a vzájomne sa prelínajú, je potrebné zabezpečiť, aby sa webový obsah zobrazoval správne na každom z nich.\\
 
 \begin{fancybox}
 \textit{,,There is no Mobile Web. There is only The Web, which we view in different ways. There is also no Desktop Web. Or Tablet Web. Thank you.'' Stephen Hay} \cite{noMobileWeb}
@@ -234,28 +234,21 @@ Tento výrok bol vyslovený už pred niekoľkými rokmi a v súčasnosti pri pre
 \subsubsection{Responsive design} % (fold)
 \label{ssub:responsive_design}
 
-Pojem ,,Responsive design'' bol pôvodne súbor pravidiel tvorby dizajnu pre rôzne rozlíšenia, ktoré definoval Ethan Marcotte v článku Responsive design v roku 2010. Všetkým zariadeniam je posielaný rovnaký HTML a javascript, rozdiel je len v designe. Design sa zakladá na používaní flexibelného vzhľadu stránky, ktorý sa prispôsoboval rôznym zariadeniam, flexibilných obrázkoch, ktoré sa prispôsobujú vzhľadu a CSS media queries. \cite{responsive, mediaqueries} Až neskôr bol označený ako metóda na dosiahnutie výsledku.
+Pojem ,,Responsive design'' pôvodne zahŕňal pravidlá tvorby dizajnu pre rôzne rozlíšenia a bol špecifikovaný v roku 2010. Všetkým zariadeniam sa posiela rovnaký HTML a javascript, rozdiel je len v dizajne. Dizajn sa zakladá na používaní flexibelného vzhľadu stránky, ktorý sa prispôsoboval rôznym zariadeniam, flexibilných obrázkoch, ktorých veľkosti sa prispôsobujú vzhľadu a CSS media queries. \cite{responsive, mediaqueries} Až neskôr bol označený ako metóda na dosiahnutie výsledku.
 
-Tvorba vzhľadu pomocou Responsive design znamená používanie hodnôt v percentuálnom pomere namiesto statických hodnôt, obrázky sú prepojené s elementom stránky, majú nastavené jeho plné rozmery a automaticky sa prispôsobujú jeho zmenám. Vytvára sa stránka pre väčšie rozlíšenie a pomocou CSS media queries sa môžu aplikovať rôzne pravidlá pre jednotlivé elementy na základe rozlíšenia zariadenia, jeho orientácie či pomeru strán. Pri použití takéhoto prístupu však nastávajú problémy na mobilných zariadeniach s menším rozlíšením displeja a na väčších zariadeniach ako sú televízory.\\
+Tvorba vzhľadu pomocou Responsive design znamená aplikáciu rozmerov jednotlivých elementov v percentuálnom pomere namiesto statických hodnôt, ktoré sa tak automaticky prispôsobujú rôznym veľkostiam. Ďalej sa vytvára webová stránka pre referenčné rozlíšenie a pomocou CSS media queries sa pridávajú ďalšie pravidlá pre elementy ako by mali vyzerať pri iných rozlíšeniach, orientácii či pomere strán. Pri použití takéhoto prístupu však nastávajú problémy správnosti zobrazenia na zariadeniach s menším či väčším rozlíšením displeja vzhľadom k ich fyzickej veľkosti, napríklad keď má televízor menšie rozlíšenie ako mobilné zariadenie.
 
-
-% \begin{center}
-% 	\includegraphics[width=1.00\textwidth]{img/responsive.png}
-% 	\captionof{figure}{Stránka http://www.londonandpartners.com/ na rôznych zariadeniach}
-% 	\label{fig: responsiveImg}
-% \end{center}
 
 \paragraph{Výhody:}
 \begin{itemize}
-	\item dobrá metóda na dosiahnutie nezávislosti zobrazenia obsahu pri rôznom rozlíšení zariadení, stránka vyzerá inak v mobilnom zariadení ako v tablete alebo stolnom počítači
-	\item rýchly vývoj aplikácie
+	\item dosiahnutie nezávislosti zobrazenia pri rôznom rozlíšení zariadení, umožňuje prispôsobiť stránky pre mobilné zariadenia, tablety či stolové počítače
+	\item umožňuje rýchlu tvorbu aplikácie
 \end{itemize}
 
 \paragraph{Nevýhody:}
 \begin{itemize}
-	\item neumožňuje prispôsebenie obsahu, ale len jeho vzhľad
-	\item mobilné zariadenie sťahuje plnú veľkosť obrázka, ale vidí ho v menšom rozlíšení
-	\item problémy pri zariadeniach s nižším a väčším rozlíšením
+	\item neumožňuje prispôsebenie obsahu, ale len jeho zobrazenie, sťahujú sa všetky zdroje
+	\item problémy pri zariadeniach s nepomerným rozlíšením displeja vzhľadom k fyzickej veľkosti
 \end{itemize}
 
 % subsubsection responsive_design (end)
@@ -264,20 +257,21 @@ Tvorba vzhľadu pomocou Responsive design znamená používanie hodnôt v percen
 \subsubsection{Mobile First} % (fold)
 \label{ssub:mobile_first_responsive_design}
 
-Problémy pri správnom zobrazení stránky na zariadeniach s nižším rozlíšením podnietili vznik novej metódy dizajnu - ,,Mobile First''. Základ tvorí metóda Responsive design, ale pôvodný návrh stránky sa nerobí pre desktopovú verziu ale na malé rozlíšenie. Až pomocou media queries sa pridávajú elementy pre väčšie rozlíšenie. Takto sa pokryju všetky zariadenia od najmänších po najväčšie a webová stránka je pripravená na zariadenia, ktoré vzniknú aj v budúcnosti.
+Postupný rozmach mobilných zariadení s menšími rozlíšeniami a veľkosťami displejov podnietil vznik novej metódy dizajnu - ,,Mobile First''. Základ tvorí metóda Responsive design, ale pôvodný návrh stránky sa nerobí pre desktopovú verziu ale na malé rozlíšenie mobilného zariadenia. Až pomocou media queries sa postupne prispôsobujú pravidlá elementov pre väčšie a väčšie rozlíšenie. Takto sa webová stránka prispôsobí pre všetky rozlíšenia od najmänších až po tie najväčšie a zároveň je pripravená aj na ešte neexistujúce zariadenia, ktoré budú mať oveľa väčšie rozlíšenie ako majú tie súčasné.
 
-Technika Mobile First však okrem samotného dizajnu zahŕňa aj optimalizáciu webu pre používateľa či už z pohľadu UX alebo výkonu \cite{mobilefirst}.
+Technika Mobile First však okrem samotného prispôsobenia zobrazenia stránok zahŕňa aj optimalizáciu webu pre používateľa či už z pohľadu UX alebo výkonu \cite{mobilefirst}. Predpokladá, že používateľ na web pristupuje najmä z mobilného zariadenia a tak sa mu snaží čo najviač tento pobyt spríjemniť. Minimalizuje sa množstvo údajov potrebných pre vyplnenie formulárov alebo sa pripraví zobrazenie správnej klávesnice pre zadávanie číselných vstupov, emailov či čistého textu bez toho, aby ju sám musel prepínať.
 
 \paragraph{Výhody:}
 \begin{itemize}
-	\item dosiahnutie nezávislosti zobrazenia obsahu pri rôznom rozlíšení zariadení
-	\item podporuje všetky zariadenia od najmenších po najväčšie, stránka je pripravená aj na ,,zariadenia budúcnosti''
+	\item umožňuje zobrazeniť obsah pre rôzne rozlíšenia zariadení
+	\item pokrýva zariadenia od najmenších až po tie najväčšie a zároveň webová stránka je pripravená aj na ,,zariadenia budúcnosti''
+  \item vylepšenie UX
 \end{itemize}
 
 \paragraph{Nevýhody:}
 \begin{itemize}
-	\item stále neumožňuje prispôsebenie obsahu, ale len jeho vzhľad
-	\item dizajn stránky musí byť vytvorený od základu, čo však môže byť aj východa
+	\item neumožňuje prispôsebenie obsahu, ale len úpravu vzhľadu
+	\item pri existencii súčasneho riešenia webu sa dizajn stránky musí vytvorať od základu, čo však môže byť aj východa
 \end{itemize}
 
 % subsubsection mobile_first_responsive_design (end)
@@ -285,13 +279,16 @@ Technika Mobile First však okrem samotného dizajnu zahŕňa aj optimalizáciu 
 \subsubsection{Progressive enhancement} % (fold)
 \label{ssub:progressive_enhancement}
 
-V poslednom období sa stáva veľmi popolárnou metódou Progressive Enhancement. Táto metóda je založená na princípe posielania rovnakého html, javascriptu a iných zdrojových súborov všetkým zariadeniam. Následné vykonávanie aplikácie sa presúva zo strany servera a prebieha na klientovi pomocou javascriptu, kde je už možné presne špecifikovať, čo sa má kedy a ako vykonávať. Používateľovi sa sprístupňujú pokročilejšie vlastností aplikácie len ak ich podporuje používaný webový prehliadač, respektíve zariadenie. Taktiež je možné načítavať objekty zo servera len vtedy, keď sú potrebné, a tým sa zabraňuje zbytočným prenosom dát. Pri spojení tejto metódy s HTML5 je dokonca možné tvoriť offline klientské aplikácie.
+S nástupom HTML5 sa v poslednom období sa stáva veľmi popolárnou metódou Progressive Enhancement. Táto metóda je založená na princípe posielania jednotného počiatočného zdrojového kódu všetkým zariadeniam a umožňuje vytvoriť takzvanú ,,single page application''. Vykonávanie logiky aplikácie sa úplne presúva zo strany servera na klienta kde prebieha pomocou javascriptu. Tam sa ďalej presne špecifikuje čo, kedy a ako sa má vykonávať. 
 
-Pokiaľ chceme pokryť celé spektrum zariadení tak je implementácia pomocou tejto metódy náročnejšia. V spojení s metódou reseponsive design je to najlepšie možné riešenie na prispôsobenie si obsahu a vzhľadu aplikácie.
+Každému zariadeniu je umožnený základný prístup k webu a jeho obsahu. Pokiaľ však zariadenie, respektíve použítý webový prehliadač, podporuje pokročilejšie vlastnosti potrebné na beh aplikácie či prístup k senzorom, tak je mu ponúknotá obohatená verzia. Taktiež je možné doťahovať ďalšie zdroje zo servera len vtedy keď sú potrebné a tým sa zabraňuje zbytočným prenosom dát. Pomocou využívania pokričelejších možností HTML5 je dokonca možné tvoriť offline klientské webové aplikácie.
+
+Pokiaľ chceme pokryť celé spektrum zariadení tak je implementácia pomocou tejto metódy náročnejšia. V spojení s metódou reseponsive design je to ale výborné riešenie na prispôsobenie si obsahu a vzhľadu aplikácie.
 
 \paragraph{Výhody:}
 \begin{itemize}
-	\item úplne prispôsobenie obsahu a vzhľadu, minimálne alebo žiadne dátove prenosy
+	\item úplne prispôsobenie obsahu a vzhľadu
+  \item minimálne alebo žiadne dátove prenosy
 \end{itemize}
 
 \paragraph{Nevýhody:}
@@ -305,7 +302,7 @@ Pokiaľ chceme pokryť celé spektrum zariadení tak je implementácia pomocou t
 \subsubsection{Graceful degradation} % (fold)
 \label{ssub:graceful_degradation}
 
-Opak metódy Progressive enhancement sa nazýva Graceful degradation. Používateľovi sa predáva plne funkčná aplikácia nadizajnovaná na najlepšie zariadenia, kde sa na jednotlivé pokročilejšie funkcie postupne vypínajú vzhľadom na použité zariadenie. Používa sa často na upravenie súčasnej nasadenej verzie na potreby mobilných zariadení.
+Vykonávanie aplikácie prebieha na zariadení, je však opačné ako v prípade metódy Progressive enhancement. Používateľovi sa predáva plne funkčná aplikácia nadizajnovaná na najlepšie zariadenia, kde sa na jednotlivé pokročilejšie funkcie postupne vypínajú ak nie sú dostupné pre použité zariadenie. Používa sa často na upravenie súčasnej už nasadenej verzie na potreby mobilných zariadení.
 
 \begin{figure}[H]
 	\centering
@@ -346,16 +343,18 @@ Metóda Server-side Adaptation je používaná väčšinou webových stránok na
 	\item dlhšie načítavanie stránky na pomalšom internetovom pripojení, pretože dochádza k presmerovaniu
 \end{itemize}
 
+V súčasnosti sa táto metóda nahrádza pomocou metódy RESS alebo Progressive enhancement. Stále však potrebujeme informácie o type zariadenia a tak vznikajú mnohé knižnice ako napríklad WURFL.js\footnote{\url{http://wurfl.io/}} ktoré nám informácie o ňom prezradia aj na strane klienta.
+
 % subsubsection ress_ (end)
 
 \subsubsection{RESS (Responsive Design + Server Side Components)} % (fold)
 \label{ssub:ress_responsive_design_server_side_components_}
 
-Kombináciou techník Responsive Design a Server-side Adaptation vznikla novšia technika adaptácie. Pre každé zariadenie sa na serveri dynamicky vygenerujú pre neho špecifické časti webovej aplikácie, ktoré sa mu následne zobrazia a upravia pomocou responsive dizajnu.
+Kombináciou techník Responsive Design a Server-side Adaptation vznikla novšia technika adaptácie. Pre každý typ zariadenia sa na serveri dynamicky vygenerujú pre neho špecifické komponenty webovej aplikácie, ktoré sa mu následne zobrazia a upravia sa na strane klienta pomocou responsive dizajnu. Pomocou detekcie zariadenia sa však určí či sa samotný komponent má do výsledku pridať, respektíve či sa má nahradiť nejakým iným.
 
 \paragraph{Výhody:}
 \begin{itemize}
-	\item jednoduchšia udržiaveteľnosť, neexistujú rôzne verzie stránky ale len jedna
+	\item jednoduchšia udržiaveteľnosť, neexistujú rôzne verzie stránky ale len jedna z viacerými komponentami
 \end{itemize}
 
 \paragraph{Nevýhody:}
@@ -372,11 +371,11 @@ Kombináciou techník Responsive Design a Server-side Adaptation vznikla novšia
 \section{Návrh riešenia} % (fold)
 \label{sec:n_stroj_na_overenie}
 
-V tejto časti práce sa venujem návrhu jednotlivých súčastí systému. Ako nástroj na overenie adaptácie sa vytvorila knižnica s názvom Angular-Adaptive \footnote{Angular-Adaptive \url{http://angular-adaptive.github.io/} je sprievodca vo svete adaptívneho web dizajnu.} do populárneho JavaScriptového frameworku AngularJS \footnote{AngularJS \url{http://angularjs.org/} je populárny JavaScriptový framework, ktorý rozširuje HTML o nové možnosti pre webové aplikácie.}, kde sa následne skúmali možnosti adaptácie komponentov pomocou metódy progressive enhancement. 
+V tejto časti práce sa venujem návrhu jednotlivých súčastí systému, ktoré umožnia adaptáciu webovej aplikácie na rôzne zariadenia. Vytvorenie jednotlivých súčastí knižnice vzišlo z potrieb komunity vývojárov a samotného trhu. Skúmali sa najmä možnosti alternatívnych spôsobov ovládania aplikácie a adaptácia používaných komponentov. Alternatívne možnosti ovládania aplikácii sú veľmi populárne a v prostredí webových aplikácií chýbal nástroj, ktorý by umožnil jednoduchú interakciu používateľa s aplikáciou. Potrebné bolo riešiť aj veľké množstvo zbytočne prenášaných dát pomocou internetu v prostrediach a na zariadeniach, ktoré ich všetky nepotrebujú.
 
-Vytvorenie jednotlivých súčastí knižnice vzišlo z potrieb komunity vývojárov a samotného trhu. Alternatívne možnosti ovládania aplikácii sú veľmi populárne a v prostredí webových aplikácií chýbal nástroj, ktorý by umožnil jednoduchú interakciu používateľa s aplikáciou. Potrebné bolo riešiť aj veľké množstvo zbytočne prenášaných dát pomocou internetu v prostrediach a na zariadeniach, ktoré ich všetky nepotrebujú.
+Ako nástroj na overenie adaptácie sa vytvorila knižnica s názvom Angular-Adaptive\footnote{Vytvorená knižnica Angular-Adaptive \url{http://angular-adaptive.github.io/} je pomocník vo svete adaptívneho web dizajnu.} do populárneho JavaScriptového frameworku AngularJS, kde sa následne skúmali možnosti adaptácie komponentov pomocou metódy progressive enhancement.
 
-Hlavným dôvodom výberu AngularJS bola možnosť vytvárania modulov, ktoré sa dajú následne jednoducho použivať vo webových projektoch. Takáto podpora vytvárania externých modulov bude už o pár rokov natívna v prehliadačoch vďaka webovým komponentom \cite{webcomponents}. Samotná distribúcia modulov prebieha pomocou balíčkovaciemu nástroja Bower \footnote{Bower \url{http://bower.io/} je balíčkovací manažér pre web.}, ktorý je v súčasnosti štandardným distibučným miestom webových komponentov.
+Hlavným dôvodom výberu AngularJS bola možnosť vytvárania modulov, ktoré sa dajú následne jednoducho použivať vo webových projektoch. Takáto podpora vytvárania externých modulov bude už o pár rokov natívna v prehliadačoch vďaka webovým komponentom \cite{webcomponents}. Samotná distribúcia modulov prebieha pomocou balíčkovaciemu nástroja Bower\footnote{Bower \url{http://bower.io/} je balíčkovací manažér pre web.}, ktorý je v súčasnosti štandardným distibučným miestom webových komponentov.
 
 \begin{figure}[H]
   \centering
@@ -684,17 +683,8 @@ Mapy podobne ako videá vytvárajú nechcené dátové prenosy, dokonca ich ešt
 
 Používateľ nemusí chcieť okamžite interagovať s mapou a v takomto prípade ho zbytočne zaťažuje. Výhodnejšie je tak zobraziť len náhľad mapy, ktorý sa načíta rýchlejšie pretože šetrí prenášané dáta, a pokiaľ sa používateľ chce dozvedieť viac, tak len jednoducho na mapu klikne. V takomto prípade sa mu automaticky načíta plne interaktívna mapa. Na zobrazenie náhľadu mapy existuje API v službe google maps\footnote{\url{https://developers.google.com/maps/documentation/staticmaps/}}, takže je možné využiť priamo to. Nevýhodou je, že počet požiadaviek za deň, ktoré sú zadarmo, je obmedzený, po získaní API kľúča je možné ich spraviť 25000, ďalšie sú spoplatňované.
 
-Rozšírením na mobilných zariadeniach iOS je možnosť otvorenia mapy priamo v natívnej aplikácii, ktorá prináša ešte väčší používateľský zážitok ako zobrazenie na webe. To je uskutočňované pomocou url schémy. V starších verziách iOS sa nachádzala natívna aplikácia na Google API a bola vyvolaná otvorením nasledujúceho odkazu, kde bolo možné zadávať parametre zobrazenia.
+Rozšírením na mobilných zariadeniach iOS je možnosť otvorenia mapy priamo v natívnej aplikácii, ktorá prináša ešte väčší používateľský zážitok ako zobrazenie na webe. To je uskutočňované pomocou url schémy. V starších verziách iOS sa nachádzala natívna aplikácia na Google API a bola vyvolaná otvorením odkazu \url{http://maps.google.com/}, kde bolo možné zadávať parametre zobrazenia.
 
-\begin{verbatim}
-http://maps.google.com/
-\end{verbatim}
-
-S príchodom iOS 6 bola aplikácia nahradená vlastnom Apple aplikáciou, na ktorej spustenie sa zmenila aj url schéma a pôvodná otvorí mapu len v prehliadači. Výhodou je, že na starších, respektíve nepodporovaných zariadeniach nastáva presmerovanie na stránky Google a tak na rovnakom odkaze funguje spúšťanie aj pôvodnej aplikácie. Nová url schéma má nasledujúci tvar:
-
-\begin{verbatim}
-http://maps.apple.com/
-\end{verbatim}
 
 \begin{figure}[H]
   \centering
@@ -702,6 +692,8 @@ http://maps.apple.com/
   \caption[Podmienené otváranie máp]{
     Podmienené otváranie máp}
 \end{figure}
+
+S príchodom iOS 6 bola aplikácia nahradená vlastnom Apple aplikáciou, na ktorej spustenie sa zmenila aj url schéma a pôvodná otvorí mapu len v prehliadači. Výhodou je, že na starších, respektíve nepodporovaných zariadeniach nastáva presmerovanie na stránky Google a tak na rovnakom odkaze funguje spúšťanie aj pôvodnej aplikácie. Nová url schéma má tvar \url{http://maps.apple.com/}.
 
 % subsubsection mapy (end)
 
@@ -758,6 +750,8 @@ Jediné možné riešenie je len v spolupráci s natívnou aplikáciou, aj tak s
 % subsubsection otvorenie_v_aplik_cii (end)
 
 % subsection komponenty (end)
+
+\newpage
 \subsection{Nástroje} % (fold)
 \label{sub:n_stroje}
 
