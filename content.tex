@@ -807,7 +807,7 @@ Pre vytvorené webové komponenty sme sledovali množstvo ušetrených dát, mer
 
 Adaptívne vstupné metódy poskytujú alternatívne spôsoby ovládania webových aplikácií. Experimentovali sme ovládaním webových aplikácií pomocou rečových povelov, pohybu detekovaného pomocou gyroskopu a video kamery.
 
-\subsubsection{Modul adaptive-speech} % (fold)
+\subsubsection{Ovládanie pomocou reči} % (fold)
 \label{sub:adaptive_speech}
 
 Ovládanie pomocou reči bolo demonštrované vytvorením modulu adaptive-speech \footnote{\url{https://github.com/angular-adaptive/adaptive-speech}} a prototypovej aplikácie nad existujúcim systémom TodoMVC \footnote{\url{http://todomvc.com/}}, ktorý demonštruje vytvorenie todo aplikácie v rôznych javascriptových frameworkoch. 
@@ -860,7 +860,7 @@ S použitím rozpoznania reči súvisí aj rečová syntáza, vďaka ktorej viem
 
 % subsubsection adaptive_speech (end)
 
-\subsubsection{Modul adaptive-scroll} % (fold)
+\subsubsection{Ovládanie pomocou gyroskopu} % (fold)
 \label{sub:adaptive_scroll}
 
 Ovládanie pomocou gyroskopu bolo demonštrované vytvorením modulu adaptive-scroll \footnote{\url{https://github.com/angular-adaptive/adaptive-scroll}} a prototypovej aplikácie. V aplikácii je možné po spustení skrolovať pomocou natáčania zariadenia do strán. Skrolovanie prebieha na základe veľkosti uhlu natočenia zariadenia oproti počiatočnej polohe, čím je rozdiel väčší, tým sa vo webovej aplikácii skroluje rýchlejšie. Na skrolovanie v aplikácii nie je potrebná ďalšia interakcia používateľa, napríklad pomocou dotyku. 
@@ -1035,7 +1035,7 @@ Po výbere, respektíve zmene prehliadača, ktorý sa má simulovať, sa automat
 
 % subsubsection adaptive_scroll (end)
 
-\subsubsection{Modul adaptive-motion} % (fold)
+\subsubsection{Ovládanie pomocou webkamery} % (fold)
 \label{sub:adaptive_motion}
 
 Ovládanie pomocou pohybu bolo demonštrované vytvorením modulu adaptive-motion \footnote{\url{https://github.com/angular-adaptive/adaptive-motion}} a prototypovej aplikácie. V nej je umožnené sledovanie používateľa a možnosť výberu jeho vizualizácie, či už klasický obraz alebo upravený zobrazením len detekovaním jeho kože alebo detekciou hrán. V aplikácii prebieha kontinuálne rozpoznávanie používateľa a postupne sa vypisujú rozpoznané gestá, pričom posledné rozpoznané gesto sa zakaždým zvýrazní. Vytvorená prototypová aplikácia je znázornená na nasledujúcom obrázku:
@@ -1088,7 +1088,7 @@ Pri adaptívnych webových komponentoch sme sledovali rýchlosti načítavania s
 
 Emulácia internetového pripojania prebiahala pomocou programu ,,Network Lint Conditioner'' a ďalej sa uvádzajú priemerné namerané hodnoty z 10 experimentov spolu so smerodajnými odchýlkami pre jednotlivé druhy internetového pripojenia.
 
-\subsubsection{Modul adaptive-youtube} % (fold)
+\subsubsection{Modul youtube videa} % (fold)
 \label{sub:adaptive_youtube}
 
 Webový komponent youtube videa bol demonštrovaný vytvorením modulu adaptive-youtube \footnote{\url{https://github.com/angular-adaptive/adaptive-youtube}} a demo aplikácie. V aplikácii je umožnené meniť automatické načítavanie videa. Pokiaľ sa pristupuje z mobilného zariadenia a pomalého pripojenia na internet, tak sa zobrazí len náhľad videa v podobe obrázku. Až po kliknutí na video sa dotiahne samotné video a začne sa prehrávať, respektíve video sa otvorí v natívnej mobilnej aplikácii.
@@ -1171,7 +1171,7 @@ Použitím nášho modulu sa však zvýši aj čas zostavenia DOM stromu stránk
 % subsubsection adaptive_youtube (end)
 
 % \newpage
-\subsubsection{Modul adaptive-googlemaps} % (fold)
+\subsubsection{Modul google maps} % (fold)
 \label{sub:adaptive_googlemaps}
 
 Webový komponent google máp bol demonštrovaný vytvorením modulu adaptive-googlemaps \footnote{\url{https://github.com/angular-adaptive/adaptive-googlemaps}} a demo aplikácie. V aplikácii je umožnené meniť zvýraznené body, centrovanie, priblíženie a zobrazený terén a automaticky sa prispôsobí používateľovmu zariadeniu. Pokiaľ sa pristupuje z mobilného zariadenia a pomalého pripojenia na internet, tak sa zobrazí len náhľad mapy v podobe obrázku. Až po kliknutí na mapu sa dotiahne interaktívna mapa, respektíve mapa sa otvorí v natívnej mobilnej aplikácii. Vytvorená demo aplikácia je znázornená na nasledujúcom obrázku:
